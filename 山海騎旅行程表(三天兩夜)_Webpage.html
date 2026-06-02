@@ -1,0 +1,465 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CARRY MORE | 挑戰山海自行車行程</title>
+    <style>
+        :root {
+            --primary-color: #0B1B3D; /* Midnight Navy */
+            --accent-color: #C5A059; /* Champagne Gold */
+            --bg-color: #F9F9F9;
+            --text-color: #2B2B2B;
+            --light-gray: #E0E0E0;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #FFFFFF;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: #FFFFFF;
+            text-align: center;
+            padding: 40px 20px;
+            border-bottom: 5px solid var(--accent-color);
+        }
+
+        header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            margin: 15px 0;
+            font-size: 2.2rem;
+            line-height: 1.3;
+        }
+
+        header p {
+            font-style: italic;
+            opacity: 0.8;
+            margin-bottom: 0;
+        }
+
+        .section {
+            padding: 30px 40px;
+        }
+
+        .section-title {
+            color: var(--accent-color);
+            font-size: 1.8rem;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+            display: inline-block;
+        }
+
+        .highlight-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .highlight-item {
+            background-color: var(--bg-color);
+            border-left: 4px solid var(--primary-color);
+            padding: 15px 20px;
+            border-radius: 4px;
+        }
+
+        .highlight-item h4 {
+            margin-top: 0;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        .day-block {
+            margin-bottom: 40px;
+        }
+
+        .day-header {
+            background-color: var(--primary-color);
+            color: #FFFFFF;
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 4px 4px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .day-stats {
+            font-size: 0.9rem;
+            color: var(--accent-color);
+            font-weight: normal;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: var(--accent-color);
+            color: #FFFFFF;
+            text-align: left;
+            padding: 12px 15px;
+            font-weight: bold;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--light-gray);
+            vertical-align: top;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .time-col {
+            width: 20%;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .item-col {
+            width: 35%;
+            font-weight: bold;
+        }
+
+        .notes-col {
+            width: 45%;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .logistics-item {
+            display: flex;
+            background-color: #fff;
+            border: 1px solid var(--light-gray);
+            margin-bottom: 15px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .logistics-title {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 20px;
+            width: 120px;
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .logistics-content {
+            padding: 20px;
+            flex: 1;
+        }
+
+        footer {
+            background-color: #222;
+            color: #888;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+        }
+
+        /* Custom link styling */
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            opacity: 0.8;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+            .section {
+                padding: 20px;
+            }
+            header h1 {
+                font-size: 1.8rem;
+            }
+            .day-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            th {
+                display: none;
+            }
+            tr {
+                border-bottom: 2px solid var(--primary-color);
+                margin-bottom: 15px;
+            }
+            td {
+                border: none;
+                padding: 10px 15px;
+            }
+            .time-col, .item-col, .notes-col {
+                width: 100%;
+            }
+            .time-col {
+                background-color: var(--bg-color);
+                padding-bottom: 5px;
+            }
+            .logistics-item {
+                flex-direction: column;
+            }
+            .logistics-title {
+                width: auto;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h3>C A R R Y &nbsp; M O R E ｜ 凱莫國際</h3>
+        <h1>MOUNTAIN ⇄ SEA CHALLENGE<br>南投日月潭 → 塔塔加 → 嘉義市區 → 台灣極西點 → 高雄左營</h1>
+        <p>挑戰山海自行車行程 • More Than Just a Ride.</p>
+    </header>
+
+    <div class="section">
+        <h2 class="section-title">01 行程亮點</h2>
+        <div class="highlight-grid">
+            <div class="highlight-item">
+                <h4>山海雙絕，終極縱橫</h4>
+                <p>從靜謐翠綠的日月潭清晨湖景，直攻台21線公路之巔的新中橫塔塔加（海拔 2,610 m），再一路向南挺進台灣極西點國聖港燈塔，最終抵達北高360終點左營。一次旅程，飽覽台灣最震撼的高山與海岸景致。</p>
+            </div>
+            <div class="highlight-item">
+                <h4>頂級後勤，熱血無憂</h4>
+                <p>全程配置專業賓士保母車2台與小莫教練團全天候跟隨補給。不管是陡坡上的補水補給、機械故障，還是塔塔加登頂後的安全下滑接駁，都有小莫教練團提供最堅實靠的陪伴。</p>
+            </div>
+            <div class="highlight-item">
+                <h4>完美節奏，無縫銜接</h4>
+                <p>兼顧高強度挑戰與舒適休整。每日騎乘後皆安排特色住宿與豐富餐食，回程精準安排高鐵接駁，讓騎士只需專注於雙腳的踩踏與享受熱血。</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">02 每日詳細行程表</h2>
+        
+        <!-- Day 1 -->
+        <div class="day-block">
+            <div class="day-header">DAY 1 &nbsp; 6/12（五） ｜ 移動整備日</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="time-col">時間</th>
+                        <th class="item-col">行程項目</th>
+                        <th class="notes-col">補給 / 餐食 / 後勤備註</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="time-col">12:00</td>
+                        <td class="item-col">【台北集合】<br>於<a href="https://maps.app.goo.gl/EBKzm475oQumWi8E7" target="_blank">來來亭停車場</a>集合</td>
+                        <td class="notes-col">集合點：<a href="https://maps.app.goo.gl/EBKzm475oQumWi8E7" target="_blank">來來亭停車場</a></td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">12:15</td>
+                        <td class="item-col">【發車啟程】<br>包車前往日月潭</td>
+                        <td class="notes-col">預計車程約 3 小時</td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">15:00</td>
+                        <td class="item-col">【抵達入住】<br>抵達<a href="https://maps.app.goo.gl/ae2vRvHadaaZ4HTy8" target="_blank">「日月潭明宿」</a>，辦理入住與單車整備</td>
+                        <td class="notes-col">住宿：<a href="https://maps.app.goo.gl/ae2vRvHadaaZ4HTy8" target="_blank">日月潭明宿</a>（1 間雙人木屋 ＋ 3 間四人木屋）。<br>後勤：檢查煞車、變速、胎壓與燈具。</td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">★視情況</td>
+                        <td class="item-col">【日月潭遊湖行程】<br>從水社碼頭搭船至伊達邵碼頭</td>
+                        <td class="notes-col">視當天時間是否允許安排</td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">18:30</td>
+                        <td class="item-col">【美味晚餐】<br>於<a href="https://maps.app.goo.gl/HtPmGdDV2pRAFHrK6" target="_blank">「阿爸食堂」</a>享用在地晚餐</td>
+                        <td class="notes-col">提早休整，為隔日挑戰儲備體力。</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Day 2 -->
+        <div class="day-block">
+            <div class="day-header">DAY 2 &nbsp; 6/13（六） ｜ 高強度山區挑戰日</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="time-col">時間</th>
+                        <th class="item-col">行程項目</th>
+                        <th class="notes-col">補給 / 餐食 / 後勤備註</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="time-col">晨間</td>
+                        <td class="item-col">【活力早餐】<br>於明宿享用美味早餐</td>
+                        <td class="notes-col">高山挑戰不建議空腹騎乘。</td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">06:30–07:30</td>
+                        <td class="item-col">【環湖暖身】<br>清晨日月潭環湖騎乘一圈</td>
+                        <td class="notes-col">今日騎乘起點，享受湖光山色並喚醒肌肉。</td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">07:30</td>
+                        <td class="item-col">【長爬坡挑戰】<br>新中橫公路直攻塔塔加</td>
+                        <td class="notes-col">全長 87 Km、總爬升 2,900 m、下滑 580 m。<br>出發後 14 Km 接 NeverStop 路線 <a href="https://ridewithgps.com/routes/39134184" target="_blank">🔗路線參考</a></td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">21 Km 處</td>
+                        <td class="item-col">【第一補給點】<br>信義鄉門市</td>
+                        <td class="notes-col">除補給站外；小莫教練全程專業保母車補給。</td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">35 Km 處</td>
+                        <td class="item-col">【第二補給點】<br>和社門市</td>
+                        <td class="notes-col">除補給站外；小莫教練全程專業保母車補給。</td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">15:00</td>
+                        <td class="item-col">【登頂完騎】<br>抵達塔塔加遊客中心（終點）</td>
+                        <td class="notes-col">台 21 線至高點，海拔約 2,610 m。<br>山區氣溫低，登頂後立即加穿風衣保暖。</td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">15:00 後</td>
+                        <td class="item-col">【安全接駁】<br>搭乘保母車下滑至嘉義</td>
+                        <td class="notes-col">避免高山長途下滑失溫風險。</td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">約18:00前</td>
+                        <td class="item-col">【商旅入住】<br>抵達<a href="https://maps.app.goo.gl/iEw3obR24y8C8vTH8" target="_blank">「福泰桔子商旅文化店」</a></td>
+                        <td class="notes-col">入住<a href="https://maps.app.goo.gl/iEw3obR24y8C8vTH8" target="_blank">福泰桔子商旅文化店</a><br>晚餐：嘉義市區自理（餐後自由行動）。</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Day 3 -->
+        <div class="day-block">
+            <div class="day-header">
+                DAY 3 &nbsp; 6/14（日） ｜ 海線收尾日
+                <span class="day-stats">塔塔加最高海拔: 2,610m | 單日總爬升: 2,900m</span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="time-col">時間</th>
+                        <th class="item-col">行程項目</th>
+                        <th class="notes-col">補給 / 餐食 / 後勤備註</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="time-col">晨間</td>
+                        <td class="item-col">【活力早餐】<br>於商旅享用豐盛早餐</td>
+                        <td class="notes-col">福泰桔子商旅文化店提供。</td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">07:00</td>
+                        <td class="item-col">【海線出發】<br>由嘉義啟程南下挺進海線</td>
+                        <td class="notes-col">今日定位：海線長距離收尾。</td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">10:30–11:00</td>
+                        <td class="item-col">【極西點打卡】<br>抵達極西點—國聖港燈塔</td>
+                        <td class="notes-col">沿海路段請留意強烈逆風、側風與曝曬。</td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">中午</td>
+                        <td class="item-col">【午餐補給】<br>於安南區<a href="https://maps.app.goo.gl/DCkSv6fH665MAfw7A" target="_blank">「福風牛排」</a>館享用午餐</td>
+                        <td class="notes-col"><a href="https://maps.app.goo.gl/DCkSv6fH665MAfw7A" target="_blank">福風牛排館</a></td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">12:00–16:00</td>
+                        <td class="item-col">【終極衝刺】<br>沿海線經茄萣、梓官騎抵高雄左營</td>
+                        <td class="notes-col">一路由台南衝刺回高雄，完成山海大縱走。<br>★提醒：不管當天騎到那裡，為了後續行程進行，騎行活動可能提前結束，以確保所有人在16:00抵達<a href="https://maps.app.goo.gl/bTWFXQwzfUZGt7d28" target="_blank">日光高鐵精品旅館</a>。</td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">16:00</td>
+                        <td class="item-col">【盥洗修整】<br>抵達<a href="https://maps.app.goo.gl/bTWFXQwzfUZGt7d28" target="_blank">「日光高鐵精品旅館」</a></td>
+                        <td class="notes-col">專屬休息點，舒適盥洗</td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">17:00</td>
+                        <td class="item-col">【慶功晚餐】<br>於<a href="https://maps.app.goo.gl/eoEQxjDGb3ee2xLm8" target="_blank">「牛老大」</a>享用溫體牛慶功宴</td>
+                        <td class="notes-col"><a href="https://maps.app.goo.gl/eoEQxjDGb3ee2xLm8" target="_blank">牛老大</a></td>
+                    </tr>
+                    <tr>
+                        <td class="time-col">20:15</td>
+                        <td class="item-col">【高鐵返程】<br>左營高鐵站搭車返回台北</td>
+                        <td class="notes-col">1258 車次（21:54 抵台北），自由座 10–12 車廂。<br>需預留進站驗票時間。【自行車直接交由小莫教練載運回台北】</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">03 專業後勤計畫</h2>
+        
+        <div class="logistics-item">
+            <div class="logistics-title">保母車與<br>接駁配置</div>
+            <div class="logistics-content">
+                ▸ 全程保母車：負責托運隨身行李、單車備品及專業補給品、泡麵等等。<br>
+                ▸ 安全接駁安排：Day 2 塔塔加完騎後由保母車接駁全員安全下滑至嘉義住宿點，避免失溫與疲勞駕駛風險；Day 3 抵達左營後另安排精品旅館供洗漱。
+            </div>
+        </div>
+
+        <div class="logistics-item">
+            <div class="logistics-title">裝備建議</div>
+            <div class="logistics-content">
+                ▸ 單車整備：出發前務必確認煞車系統、變速與胎壓正常。<br>
+                ▸ 人身裝備：安全帽、長指手套、防風衣、高山保暖層（塔塔加氣溫低）、水壺 ×2、個人隨身藥品。
+            </div>
+        </div>
+
+        <div class="logistics-item">
+            <div class="logistics-title">凱莫國際<br>全額贊助</div>
+            <div class="logistics-content">
+                ▸ 本次騎行活動提供全程新安東京平安險：保額200萬，意外醫療10萬。<br>
+                ▸ 遊船活動－日月潭遊湖行程：從水社碼頭搭船至伊達邵碼頭。
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 CARRY MORE 凱莫國際. All rights reserved.
+    </footer>
+</div>
+
+</body>
+</html>
