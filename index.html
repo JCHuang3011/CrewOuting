@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>備戰塔塔加之666約騎擎天崗</title>
+  <title>活動通知總覽</title>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg:      #0b1525;
-      --panel:   #0f1f35;
-      --border:  #1c3350;
-      --gold:    #f5a623;
-      --orange:  #e8621a;
-      --green:   #27ae60;
-      --blue:    #2980b9;
-      --red:     #e74c3c;
-      --text:    #dce8f0;
-      --muted:   #7a9bb5;
+      --bg:     #0b1525;
+      --panel:  #0f1f35;
+      --border: #1c3350;
+      --gold:   #f5a623;
+      --orange: #e8621a;
+      --green:  #27ae60;
+      --blue:   #2980b9;
+      --red:    #e74c3c;
+      --text:   #dce8f0;
+      --muted:  #7a9bb5;
     }
 
     body {
@@ -25,24 +25,21 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      overflow-x: hidden;
     }
 
     /* ── HERO ── */
     .hero {
       position: relative;
       background: linear-gradient(170deg, #071020 0%, #0e2040 55%, #0a1a2e 100%);
-      padding: 50px 20px 0;
+      padding: 60px 20px 0;
       text-align: center;
       overflow: hidden;
     }
-    .hero-stars {
-      position: absolute; inset: 0; pointer-events: none;
-    }
+    .hero-stars { position: absolute; inset: 0; pointer-events: none; }
     .star { position: absolute; background: white; border-radius: 50%; animation: twinkle 3s infinite alternate; }
     @keyframes twinkle { from { opacity: .2 } to { opacity: .9 } }
 
-    .event-tag {
+    .site-tag {
       display: inline-block;
       background: linear-gradient(90deg, var(--orange), var(--red));
       color: white;
@@ -51,206 +48,140 @@
       font-size: 13px;
       font-weight: 700;
       letter-spacing: 2px;
-      margin-bottom: 22px;
+      margin-bottom: 20px;
     }
     .hero h1 {
-      font-size: clamp(26px, 6vw, 54px);
+      font-size: clamp(28px, 6vw, 52px);
       font-weight: 900;
-      line-height: 1.25;
+      line-height: 1.2;
       text-shadow: 0 4px 20px rgba(0,0,0,.7);
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
-    .hero h1 em {
-      font-style: normal;
-      color: var(--gold);
-    }
-    .hero-date {
-      font-size: clamp(15px, 3vw, 22px);
+    .hero h1 em { font-style: normal; color: var(--gold); }
+    .hero-sub {
+      font-size: clamp(13px, 2.5vw, 17px);
       color: var(--muted);
-      letter-spacing: 4px;
-      margin-bottom: 36px;
-    }
-    .hero-date span { color: var(--gold); font-weight: 700; }
-
-    /* sunrise glow */
-    .sun-glow {
-      position: absolute;
-      bottom: 80px; right: 60px;
-      width: 120px; height: 120px;
-      background: radial-gradient(circle, rgba(245,166,35,.4) 0%, transparent 70%);
-      border-radius: 50%;
+      letter-spacing: 2px;
+      margin-bottom: 44px;
     }
 
-    /* mountains SVG row */
     .hero-mountains { display: block; width: 100%; }
 
     /* ── LAYOUT ── */
-    .container { max-width: 920px; margin: 0 auto; padding: 0 20px; }
+    .container { max-width: 860px; margin: 0 auto; padding: 0 20px; }
 
-    section { padding: 44px 0; }
-    section + section { border-top: 1px solid var(--border); }
+    /* ── ACTIVITY LIST ── */
+    .list-section { padding: 52px 0 60px; }
 
     .section-heading {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 800;
       color: var(--gold);
-      margin-bottom: 28px;
+      margin-bottom: 32px;
     }
     .section-heading::before {
       content: '';
       display: block;
-      width: 5px; height: 22px;
+      width: 5px; height: 20px;
       background: var(--gold);
       border-radius: 3px;
       flex-shrink: 0;
     }
 
-    /* ── KEY INFO STRIP ── */
-    .key-strip {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+    .activity-list {
+      display: flex;
+      flex-direction: column;
       gap: 16px;
     }
-    @media (max-width: 580px) { .key-strip { grid-template-columns: 1fr; } }
 
-    .key-card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 22px 18px;
-      text-align: center;
-    }
-    .key-card .kc-icon { font-size: 32px; margin-bottom: 10px; }
-    .key-card .kc-label { font-size: 12px; color: var(--muted); letter-spacing: 1px; margin-bottom: 6px; }
-    .key-card .kc-value { font-size: 17px; font-weight: 700; line-height: 1.4; }
-    .key-card .kc-sub   { font-size: 13px; color: var(--muted); margin-top: 4px; }
-
-    /* ── TIMELINE ── */
-    .timeline { position: relative; padding-left: 36px; }
-    .timeline::before {
-      content: '';
-      position: absolute; left: 12px; top: 6px; bottom: 6px;
-      width: 2px;
-      background: linear-gradient(to bottom, var(--red), var(--gold), var(--blue), var(--green));
-      border-radius: 2px;
-    }
-    .tl-item {
-      position: relative;
-      margin-bottom: 28px;
-    }
-    .tl-item:last-child { margin-bottom: 0; }
-    .tl-dot {
-      position: absolute;
-      left: -30px; top: 4px;
-      width: 16px; height: 16px;
-      border-radius: 50%;
-      border: 2px solid var(--bg);
-    }
-    .tl-item.is-key .tl-dot { width: 20px; height: 20px; left: -32px; top: 2px; }
-
-    .tl-time  { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 1px; }
-    .tl-title { font-size: 18px; font-weight: 800; margin: 3px 0 4px; }
-    .tl-desc  { font-size: 14px; color: var(--muted); }
-
-    /* ── ROUTE MAP ── */
-    .map-wrap {
+    .activity-card {
+      display: flex;
+      align-items: center;
+      gap: 20px;
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 16px;
-      overflow: hidden;
-    }
-    .map-wrap img {
-      display: block; width: 100%; height: auto;
-      border-radius: 16px 16px 0 0;
-    }
-    .strava-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      padding: 18px 20px;
-      gap: 10px;
-    }
-    .ss-item { text-align: center; }
-    .ss-label { font-size: 11px; color: var(--muted); letter-spacing: 1px; margin-bottom: 4px; }
-    .ss-value { font-size: 22px; font-weight: 900; color: var(--gold); line-height: 1; }
-    .ss-unit  { font-size: 13px; color: var(--muted); margin-left: 3px; }
-    .strava-badge {
-      display: flex; align-items: center; justify-content: center;
-      gap: 8px; padding: 10px 20px 16px;
-      font-size: 12px; color: #888;
-    }
-    .strava-badge svg { height: 18px; width: auto; }
-
-    /* ── LOCATION CARDS ── */
-    .loc-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-    }
-    @media (max-width: 560px) { .loc-grid { grid-template-columns: 1fr; } }
-
-    .loc-card {
-      display: block;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 24px 22px;
+      padding: 22px 26px;
       text-decoration: none;
       color: inherit;
       transition: transform .2s, border-color .2s, box-shadow .2s;
     }
-    .loc-card:hover {
-      transform: translateY(-4px);
+    .activity-card:hover {
+      transform: translateY(-3px);
       border-color: var(--gold);
-      box-shadow: 0 8px 30px rgba(245,166,35,.15);
-    }
-    .loc-icon  { font-size: 38px; margin-bottom: 12px; }
-    .loc-title { font-size: 15px; font-weight: 700; color: var(--gold); margin-bottom: 4px; }
-    .loc-name  { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
-    .loc-info  { font-size: 13px; color: var(--muted); margin-bottom: 16px; line-height: 1.6; }
-    .loc-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: linear-gradient(90deg, #1a5f8a, #1a3f6a);
-      color: white;
-      padding: 9px 18px;
-      border-radius: 9px;
-      font-size: 13px;
-      font-weight: 700;
-      text-decoration: none;
+      box-shadow: 0 8px 30px rgba(245,166,35,.12);
     }
 
-    /* ── NOTES ── */
-    .notes-box {
-      background: rgba(245,166,35,.07);
-      border: 1px solid rgba(245,166,35,.25);
-      border-radius: 14px;
-      padding: 22px 26px;
+    .ac-date {
+      flex-shrink: 0;
+      text-align: center;
+      background: rgba(245,166,35,.1);
+      border: 1px solid rgba(245,166,35,.3);
+      border-radius: 12px;
+      padding: 12px 16px;
+      min-width: 72px;
     }
-    .notes-box ul { list-style: none; }
-    .notes-box li {
-      padding: 7px 0 7px 22px;
-      position: relative;
-      font-size: 15px;
-      color: #c8d8e8;
-      border-bottom: 1px solid rgba(255,255,255,.05);
-    }
-    .notes-box li:last-child { border-bottom: none; }
-    .notes-box li::before {
-      content: '▸';
-      color: var(--gold);
-      position: absolute; left: 0; top: 8px;
+    .ac-date .month {
       font-size: 12px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 1px;
     }
-    .notes-box li strong { color: var(--gold); }
+    .ac-date .day {
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--gold);
+    }
+    .ac-date .weekday {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .ac-body { flex: 1; min-width: 0; }
+    .ac-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ac-meta {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .ac-arrow {
+      flex-shrink: 0;
+      font-size: 22px;
+      color: var(--muted);
+      transition: color .2s, transform .2s;
+    }
+    .activity-card:hover .ac-arrow {
+      color: var(--gold);
+      transform: translateX(4px);
+    }
+
+    /* empty state */
+    .empty-hint {
+      text-align: center;
+      color: var(--muted);
+      font-size: 15px;
+      padding: 40px 0;
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+    }
 
     /* ── FOOTER ── */
     footer {
       text-align: center;
-      padding: 32px 20px;
+      padding: 28px 20px;
       border-top: 1px solid var(--border);
       color: var(--muted);
       font-size: 13px;
@@ -263,7 +194,6 @@
 
 <!-- ════════════ HERO ════════════ -->
 <header class="hero">
-  <!-- stars -->
   <div class="hero-stars" aria-hidden="true">
     <div class="star" style="width:2px;height:2px;top:8%;left:5%;animation-delay:0s"></div>
     <div class="star" style="width:1.5px;height:1.5px;top:12%;left:18%;animation-delay:.5s"></div>
@@ -273,18 +203,13 @@
     <div class="star" style="width:1.5px;height:1.5px;top:14%;left:75%;animation-delay:.8s"></div>
     <div class="star" style="width:1px;height:1px;top:9%;left:88%;animation-delay:.2s"></div>
     <div class="star" style="width:2px;height:2px;top:22%;left:93%;animation-delay:1.2s"></div>
-    <div class="star" style="width:1.5px;height:1.5px;top:25%;left:10%;animation-delay:.6s"></div>
-    <div class="star" style="width:1px;height:1px;top:30%;left:55%;animation-delay:1.8s"></div>
   </div>
 
-  <div class="sun-glow"></div>
+  <div class="site-tag">🏃 活動通知</div>
+  <h1><em>活動通知總覽</em></h1>
+  <p class="hero-sub">點擊活動卡片查看詳細通知</p>
 
-  <div class="event-tag">🚴 約騎活動通知</div>
-  <h1><em>備戰塔塔加之666約騎擎天崗</em></h1>
-  <p class="hero-date"><span>2026</span> · <span>06</span> · <span>06</span> &nbsp;(六)</p>
-
-  <!-- Mountain silhouette -->
-  <svg class="hero-mountains" viewBox="0 0 1200 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <svg class="hero-mountains" viewBox="0 0 1200 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
       <linearGradient id="hm1" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="#1a3a2a"/>
@@ -295,191 +220,46 @@
         <stop offset="100%" stop-color="#0b1525"/>
       </linearGradient>
     </defs>
-    <!-- back mountains -->
-    <polygon points="0,160 0,100 80,50 180,90 300,30 420,80 540,20 660,70 780,15 900,65 1020,10 1140,60 1200,40 1200,160"
+    <polygon points="0,120 0,80 80,40 180,70 300,20 420,60 540,10 660,55 780,8 900,50 1020,5 1140,45 1200,30 1200,120"
              fill="url(#hm1)" opacity=".6"/>
-    <!-- front mountains -->
-    <polygon points="0,160 0,120 100,80 200,110 340,60 480,100 580,50 700,95 820,45 940,90 1060,40 1180,80 1200,70 1200,160"
+    <polygon points="0,120 0,95 100,65 200,88 340,45 480,80 580,38 700,75 820,30 940,72 1060,28 1180,62 1200,55 1200,120"
              fill="url(#hm2)"/>
   </svg>
 </header>
 
 <!-- ════════════ MAIN ════════════ -->
 <main class="container">
+  <section class="list-section">
+    <div class="section-heading">所有活動</div>
 
-  <!-- KEY INFO -->
-  <section>
-    <div class="section-heading">活動重點</div>
-    <div class="key-strip">
-      <div class="key-card">
-        <div class="kc-icon">📅</div>
-        <div class="kc-label">活動日期</div>
-        <div class="kc-value">2026 / 06 / 06</div>
-        <div class="kc-sub">星期六</div>
-      </div>
-      <div class="key-card">
-        <div class="kc-icon">⏰</div>
-        <div class="kc-label">集合 / 出發</div>
-        <div class="kc-value">06:45 集合</div>
-        <div class="kc-sub">07:00 準時出發</div>
-      </div>
-      <div class="key-card">
-        <div class="kc-icon">🏔️</div>
-        <div class="kc-label">今日目標</div>
-        <div class="kc-value">擎天崗</div>
-        <div class="kc-sub">陽明山最美草原</div>
-      </div>
-    </div>
-  </section>
+    <div class="activity-list">
 
-  <!-- TIMELINE -->
-  <section>
-    <div class="section-heading">行程時間表</div>
-    <div class="timeline">
+      <!-- ★ 在此新增活動，複製下方卡片格式 ★ -->
 
-      <div class="tl-item is-key">
-        <div class="tl-dot" style="background:var(--red)"></div>
-        <div class="tl-time">06:45 AM</div>
-        <div class="tl-title">集合 📍</div>
-        <div class="tl-desc">及泰淡水紅毛城停車場集合，確認人員裝備</div>
-      </div>
-
-      <div class="tl-item is-key">
-        <div class="tl-dot" style="background:var(--orange)"></div>
-        <div class="tl-time">07:00 AM</div>
-        <div class="tl-title">準時出發 🚴</div>
-        <div class="tl-desc">請勿遲到！從淡水出發，接上巴拉卡公路</div>
-      </div>
-
-      <div class="tl-item">
-        <div class="tl-dot" style="background:var(--gold)"></div>
-        <div class="tl-time">途中</div>
-        <div class="tl-title">巴拉卡公路爬升</div>
-        <div class="tl-desc">挑戰巴拉卡！沿途俯瞰淡水河口，風景無敵</div>
-      </div>
-
-      <div class="tl-item">
-        <div class="tl-dot" style="background:#e67e22"></div>
-        <div class="tl-time">途中</div>
-        <div class="tl-title">二子坪</div>
-        <div class="tl-desc">絕佳補給休息點，欣賞二子坪濕地草原美景</div>
-      </div>
-
-      <div class="tl-item">
-        <div class="tl-dot" style="background:var(--blue)"></div>
-        <div class="tl-time">途中</div>
-        <div class="tl-title">陽金公路</div>
-        <div class="tl-desc">接上陽金公路，俯瞰金山平原，視野開闊</div>
-      </div>
-
-      <div class="tl-item">
-        <div class="tl-dot" style="background:#8e44ad"></div>
-        <div class="tl-time">途中</div>
-        <div class="tl-title">中湖戰備道</div>
-        <div class="tl-desc">轉入戰備道路段，體驗隱密山路的獨特滋味</div>
-      </div>
-
-      <div class="tl-item is-key">
-        <div class="tl-dot" style="background:var(--green)"></div>
-        <div class="tl-time">終點 🏆</div>
-        <div class="tl-title">抵達擎天崗！</div>
-        <div class="tl-desc">海拔約 820m，遼闊草原，打卡留念，補給休息</div>
-      </div>
-
-      <div class="tl-item is-key">
-        <div class="tl-dot" style="background:#9b59b6"></div>
-        <div class="tl-time">11:30 AM</div>
-        <div class="tl-title">聚餐 🍽️</div>
-        <div class="tl-desc">LA VILLA DANSHUI 餐廳開門，一起大吃慶功！</div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ROUTE MAP -->
-  <section>
-    <div class="section-heading">騎行路線示意圖</div>
-    <div class="map-wrap">
-      <img src="893509.jpg" alt="Strava 路線圖：淡水 → 巴拉卡公路 → 二子坪 → 陽金公路 → 中湖戰備道 → 擎天崗">
-      <div class="strava-stats">
-        <div class="ss-item">
-          <div class="ss-label">距離</div>
-          <div class="ss-value">52.41<span class="ss-unit">公里</span></div>
+      <a href="20260606-擎天崗.html" class="activity-card">
+        <div class="ac-date">
+          <div class="month">2026 / 06</div>
+          <div class="day">06</div>
+          <div class="weekday">六</div>
         </div>
-        <div class="ss-item">
-          <div class="ss-label">爬升海拔</div>
-          <div class="ss-value">1,194<span class="ss-unit">公尺</span></div>
+        <div class="ac-body">
+          <div class="ac-title">備戰塔塔加之666約騎擎天崗</div>
+          <div class="ac-meta">
+            📍 淡水 → 巴拉卡公路 → 二子坪 → 陽金公路 → 中湖戰備道 → 擎天崗<br>
+            🏔️ 距離 52km · 爬升 1,194m　⏰ 07:00 出發
+          </div>
         </div>
-        <div class="ss-item">
-          <div class="ss-label">參考時間</div>
-          <div class="ss-value">3<span class="ss-unit">時</span>07<span class="ss-unit">分</span></div>
-        </div>
-      </div>
-      <div class="strava-badge">
-        <svg viewBox="0 0 200 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Strava">
-          <path d="M36 24L24 0 12 24h8L24 12l4 12h8z" fill="#FC4C02"/>
-          <path d="M40 24l-4-12-4 12h8z" fill="#FC4C02" opacity=".5"/>
-          <text x="56" y="33" font-family="sans-serif" font-size="22" font-weight="800" fill="#FC4C02" letter-spacing="2">STRAVA</text>
-        </svg>
-        <span>依據實際紀錄，個人狀況因人而異</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- LOCATIONS -->
-  <section>
-    <div class="section-heading">地點資訊</div>
-    <div class="loc-grid">
-
-      <a href="https://maps.app.goo.gl/evL2Sdf9YDXdFNFb8" target="_blank" rel="noopener" class="loc-card">
-        <div class="loc-icon">📍</div>
-        <div class="loc-title">集合地點</div>
-        <div class="loc-name">及泰淡水紅毛城停車場</div>
-        <div class="loc-info">
-          ⏰ 06:45 集合<br>
-          🚴 07:00 準時出發<br>
-          請提早抵達，確認車況
-        </div>
-        <span class="loc-btn">🗺️ 開啟 Google Maps</span>
-      </a>
-
-      <a href="https://maps.app.goo.gl/u3NxewkMsjKTa2zs5" target="_blank" rel="noopener" class="loc-card">
-        <div class="loc-icon">🍽️</div>
-        <div class="loc-title">聚餐地點</div>
-        <div class="loc-name">LA VILLA DANSHUI</div>
-        <div class="loc-info">
-          🕦 11:30 餐廳開門<br>
-          騎車結束後一起前往<br>
-          好好犒賞自己！
-        </div>
-        <span class="loc-btn">🗺️ 開啟 Google Maps</span>
+        <div class="ac-arrow">›</div>
       </a>
 
     </div>
   </section>
-
-  <!-- NOTES -->
-  <section>
-    <div class="section-heading">注意事項</div>
-    <div class="notes-box">
-      <ul>
-        <li>請於 <strong>06:45</strong> 前抵達及泰淡水紅毛城停車場，<strong>07:00 準時出發</strong>，勿遲到</li>
-        <li>全程距離 52km、爬升 1,194m，出發前請確認<strong>車況良好</strong>（煞車、胎壓、變速）</li>
-        <li>攜帶充足<strong>飲水與補給食品</strong>，山上補給點少</li>
-        <li>全程戴好<strong>安全帽</strong>，注意山路車輛及彎道安全</li>
-        <li>天氣多變，建議備妥<strong>防風薄外套</strong>，山頂氣溫較低</li>
-        <li>騎行結束後統一前往 <strong>LA VILLA DANSHUI</strong> 聚餐，<strong>11:30</strong> 餐廳開門</li>
-      </ul>
-    </div>
-  </section>
-
 </main>
 
 <!-- ════════════ FOOTER ════════════ -->
 <footer>
-  <p><b>備戰塔塔加之666約騎擎天崗</b></p>
-  <p>2026 · 06 · 06 (六)　淡水 → 巴拉卡公路 → 二子坪 → 陽金公路 → 中湖戰備道 → 擎天崗</p>
-  <p style="margin-top:12px;font-size:15px;">大家加油！享受騎行的樂趣 🚴‍♂️🚴‍♀️🏔️</p>
+  <b>活動通知總覽</b>
+  <p style="margin-top:6px;">大家加油！享受運動的樂趣 🚴‍♂️🏃‍♀️🏊‍♂️</p>
 </footer>
 
 </body>
