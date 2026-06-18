@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 小暑假韓國看球之旅｜首爾進・釜山出</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:     #0b1525;
+    --panel:  #0f1f35;
+    --panel2: #112742;
+    --border: #1c3350;
+    --gold:   #f5a623;
+    --orange: #e8621a;
+    --green:  #27ae60;
+    --blue:   #2980b9;
+    --sky:    #3aa0d8;
+    --red:    #e74c3c;
+    --text:   #dce8f0;
+    --muted:  #7a9bb5;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Noto Sans TC', 'Microsoft JhengHei', 'PingFang TC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.7;
+  }
+
+  .container { max-width: 880px; margin: 0 auto; padding: 0 20px; }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    background: linear-gradient(170deg, #071020 0%, #0e2040 55%, #0a1a2e 100%);
+    padding: 64px 20px 0;
+    text-align: center;
+    overflow: hidden;
+  }
+  .hero-stars { position: absolute; inset: 0; pointer-events: none; }
+  .star { position: absolute; background: white; border-radius: 50%; animation: twinkle 3s infinite alternate; }
+  @keyframes twinkle { from { opacity: .2 } to { opacity: .9 } }
+
+  .site-tag {
+    display: inline-block;
+    background: linear-gradient(90deg, var(--orange), var(--red));
+    color: white;
+    padding: 5px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: clamp(28px, 6vw, 50px);
+    font-weight: 900;
+    line-height: 1.2;
+    text-shadow: 0 4px 20px rgba(0,0,0,.7);
+    margin-bottom: 12px;
+  }
+  .hero h1 em { font-style: normal; color: var(--gold); }
+  .hero-sub {
+    font-size: clamp(13px, 2.5vw, 17px);
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 44px;
+  }
+  .stat {
+    background: rgba(245,166,35,.08);
+    border: 1px solid rgba(245,166,35,.28);
+    border-radius: 12px;
+    padding: 10px 18px;
+    min-width: 96px;
+  }
+  .stat .num { font-size: 24px; font-weight: 900; color: var(--gold); line-height: 1; }
+  .stat .lbl { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .hero-wave { display: block; width: 100%; }
+
+  /* ── SECTION ── */
+  section.block { padding: 46px 0 6px; }
+  .section-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 24px;
+  }
+  .section-heading::before {
+    content: '';
+    display: block;
+    width: 5px; height: 22px;
+    background: var(--gold);
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 24px;
+    margin-bottom: 16px;
+  }
+  .card h3 { font-size: 16px; color: var(--text); margin-bottom: 8px; }
+  .card h3 .pin { color: var(--sky); }
+  .card .addr { font-size: 13px; color: var(--muted); }
+  .card .kr { color: var(--gold); }
+
+  .notice {
+    background: rgba(232,98,26,.1);
+    border: 1px solid rgba(232,98,26,.4);
+    border-left: 4px solid var(--orange);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  /* ── LODGING GRID ── */
+  .lodge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) { .lodge-grid { grid-template-columns: 1fr; } }
+  .lodge-grid .card { margin-bottom: 0; }
+  .lodge-tag {
+    display: inline-block; font-size: 12px; font-weight: 700;
+    padding: 3px 12px; border-radius: 20px; margin-bottom: 10px;
+  }
+  .lodge-tag.seoul { background: rgba(41,128,185,.18); color: var(--sky); border: 1px solid rgba(58,160,216,.4); }
+  .lodge-tag.busan { background: rgba(39,174,96,.16); color: var(--green); border: 1px solid rgba(39,174,96,.4); }
+  .lodge-grid .dates { font-size: 13px; color: var(--muted); margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+
+  /* ── CHECKLIST ── */
+  .check-group { margin-bottom: 18px; }
+  .check-group .grp-title {
+    font-size: 14px; font-weight: 700; color: var(--sky);
+    margin-bottom: 10px;
+  }
+  ul.checklist { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  ul.checklist li {
+    position: relative; padding-left: 30px; font-size: 14px; color: var(--text);
+  }
+  ul.checklist li::before {
+    content: '';
+    position: absolute; left: 0; top: 2px;
+    width: 17px; height: 17px;
+    border: 2px solid var(--muted); border-radius: 5px;
+  }
+  ul.checklist li b { color: var(--gold); }
+  .app-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .app-pills span {
+    background: var(--panel2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 6px 14px; font-size: 13px;
+  }
+  .app-pills span b { color: var(--gold); }
+
+  /* ── DAY TIMELINE ── */
+  .day { margin-bottom: 28px; }
+  .day-head {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 16px;
+  }
+  .day-badge {
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--orange), var(--red));
+    color: white; font-weight: 900;
+    border-radius: 12px; padding: 8px 0; width: 64px; text-align: center;
+    box-shadow: 0 4px 16px rgba(232,98,26,.3);
+  }
+  .day-badge .d { font-size: 20px; line-height: 1; }
+  .day-badge .dt { font-size: 11px; opacity: .9; margin-top: 3px; }
+  .day-head .title { font-size: 17px; font-weight: 800; }
+  .day-head .title .game { color: var(--gold); }
+
+  .slots { border-left: 2px solid var(--border); margin-left: 31px; padding-left: 22px; display: flex; flex-direction: column; gap: 16px; }
+  .slot { position: relative; }
+  .slot::before {
+    content: ''; position: absolute; left: -29px; top: 4px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--bg); border: 3px solid var(--gold);
+  }
+  .slot.rain::before { border-color: var(--sky); }
+  .slot .slot-label {
+    font-size: 13px; font-weight: 700; color: var(--gold);
+    margin-bottom: 5px; letter-spacing: .5px;
+  }
+  .slot.rain .slot-label { color: var(--sky); }
+  .slot .slot-body { font-size: 14px; color: var(--text); }
+  .slot .slot-body .kr { color: var(--gold); font-size: 13px; }
+  .slot .rain-plan {
+    margin-top: 7px; font-size: 13px; color: var(--sky);
+    background: rgba(58,160,216,.08); border-radius: 8px; padding: 7px 11px;
+  }
+  .slot .tip {
+    margin-top: 7px; font-size: 13px; color: var(--muted); font-style: italic;
+  }
+  .game-line {
+    display: inline-block; margin-top: 6px;
+    background: rgba(245,166,35,.12); border: 1px solid rgba(245,166,35,.4);
+    border-radius: 8px; padding: 5px 12px; font-size: 14px; font-weight: 700; color: var(--gold);
+  }
+
+  /* ── TICKET GUIDE ── */
+  .ticket {
+    border-left: 4px solid var(--gold);
+  }
+  .ticket .tk-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .ticket .tk-head .nm { font-size: 15px; font-weight: 800; }
+  .ticket .diff { font-size: 13px; color: var(--orange); white-space: nowrap; }
+  .ticket .row { font-size: 13px; color: var(--text); margin-top: 4px; }
+  .ticket .row .k { color: var(--muted); display: inline-block; min-width: 48px; }
+
+  /* ── BUDGET TABLE ── */
+  table.budget { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.budget th, table.budget td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  table.budget th { color: var(--gold); font-size: 13px; }
+  table.budget td:last-child, table.budget th:last-child { text-align: right; }
+  table.budget tr.total td { font-weight: 900; color: var(--gold); font-size: 15px; border-bottom: none; background: rgba(245,166,35,.06); }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center; margin-top: 40px;
+    padding: 28px 20px; border-top: 1px solid var(--border);
+    color: var(--muted); font-size: 13px; line-height: 2;
+  }
+  footer b { color: var(--gold); }
+  .back-link {
+    display: inline-block; margin-bottom: 8px;
+    color: var(--sky); text-decoration: none; font-size: 14px;
+  }
+  .back-link:hover { color: var(--gold); }
+  a { color: var(--sky); }
+</style>
+</head>
+<body>
+
+<!-- ════════ HERO ════════ -->
+<header class="hero">
+  <div class="hero-stars" aria-hidden="true">
+    <div class="star" style="width:2px;height:2px;top:8%;left:5%;animation-delay:0s"></div>
+    <div class="star" style="width:1.5px;height:1.5px;top:12%;left:18%;animation-delay:.5s"></div>
+    <div class="star" style="width:2px;height:2px;top:5%;left:32%;animation-delay:1s"></div>
+    <div class="star" style="width:1px;height:1px;top:18%;left:48%;animation-delay:.3s"></div>
+    <div class="star" style="width:2px;height:2px;top:7%;left:62%;animation-delay:1.5s"></div>
+    <div class="star" style="width:1.5px;height:1.5px;top:14%;left:75%;animation-delay:.8s"></div>
+    <div class="star" style="width:1px;height:1px;top:9%;left:88%;animation-delay:.2s"></div>
+    <div class="star" style="width:2px;height:2px;top:22%;left:93%;animation-delay:1.2s"></div>
+  </div>
+
+  <div class="site-tag">⚾ 韓國職棒朝聖</div>
+  <h1>2026 小暑假<br><em>韓國看球之旅</em></h1>
+  <p class="hero-sub">首爾進・釜山出　｜　7/18 – 7/24　七天充實體驗版</p>
+
+  <div class="hero-stats">
+    <div class="stat"><div class="num">7</div><div class="lbl">天行程</div></div>
+    <div class="stat"><div class="num">3</div><div class="lbl">場 KBO 球賽</div></div>
+    <div class="stat"><div class="num">2</div><div class="lbl">座城市</div></div>
+    <div class="stat"><div class="num">∞</div><div class="lbl">美食目標</div></div>
+  </div>
+
+  <svg class="hero-wave" viewBox="0 0 1200 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <linearGradient id="hm1" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#13314f"/><stop offset="100%" stop-color="#0b1525"/>
+      </linearGradient>
+      <linearGradient id="hm2" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#0f2540"/><stop offset="100%" stop-color="#0b1525"/>
+      </linearGradient>
+    </defs>
+    <path d="M0,120 L0,70 C150,30 300,90 450,55 C600,20 750,85 900,50 C1050,25 1150,60 1200,45 L1200,120 Z" fill="url(#hm1)" opacity=".6"/>
+    <path d="M0,120 L0,90 C160,60 320,100 480,72 C640,48 800,95 960,68 C1080,48 1160,78 1200,65 L1200,120 Z" fill="url(#hm2)"/>
+  </svg>
+</header>
+
+<main class="container">
+
+  <div class="notice">
+    ⚠️ <b>梅雨季提醒</b>：7 月為韓國梅雨季末尾，建議每天出門前查看天氣預報。行程中標有 <span style="color:var(--sky)">🌧️ 藍點</span> 的時段附有室內備案。
+  </div>
+
+  <!-- 住宿 -->
+  <section class="block">
+    <div class="section-heading">🏨 住宿資訊</div>
+    <div class="lodge-grid">
+      <div class="card">
+        <span class="lodge-tag seoul">首爾</span>
+        <h3>弘大 Hongdae</h3>
+        <div class="addr">地鐵 2 號線／機場快線：弘大入口站 <span class="kr">홍대입구 239/A03/K314</span><br>
+        機場快線直達，首爾夜生活與美食中心，看完球賽回來不怕沒東西吃。<br>
+        📍 48-21 Wausan-ro 29-gil 301호, 마포구, 서울 04052</div>
+        <div class="dates">Check-in 7/18（Day 1）／ Check-out 7/22（Day 5）上午</div>
+      </div>
+      <div class="card">
+        <span class="lodge-tag busan">釜山</span>
+        <h3>西面 Seomyeon</h3>
+        <div class="addr">釜山地鐵 1／2 號線：西面站 <span class="kr">서면 119/219</span><br>
+        兩大主線交會處，去社稷球場最順，地下街與美食商圈密集。<br>
+        📍 36 Seojeon-ro 9beon-gil 3층, 부산진구, 부산 47246</div>
+        <div class="dates">Check-in 7/22（Day 5）中午／ Check-out 7/24（Day 7）上午</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 行前準備 -->
+  <section class="block">
+    <div class="section-heading">🗺️ 行前準備清單</div>
+    <div class="card">
+      <div class="check-group">
+        <div class="grp-title">出發前（台灣完成）</div>
+        <ul class="checklist">
+          <li>購買<b>旅遊保險</b>（含醫療、班機延誤、行李遺失）</li>
+          <li><b>換韓圜</b>：台灣先換一部分或備免手續費海外提款卡；明洞／弘大換匯所匯率較佳</li>
+          <li>訂購 <b>韓國 SIM / eSIM</b>（Klook、KKday 或機場取件），否則無法用 Google Maps、叫 Kakao T</li>
+          <li>6/17（三）開搶 <b>KTX 首爾→釜山</b> 7/22 早班車（Korail 官網，約出發前 1 個月開賣）</li>
+          <li>7/7（二）搶購 <b>Sky Capsule</b> 膠囊列車票（見 Day 6）</li>
+          <li>7/11 準時搶購 <b>7/18 蠶室球賽門票</b>（見購票指南）</li>
+          <li>確認弘大飯店 <b>7/18 提早 Check-in 或行李寄放</b>（預計下午 2 點前到）</li>
+        </ul>
+      </div>
+      <div class="check-group">
+        <div class="grp-title">必裝 APP</div>
+        <div class="app-pills">
+          <span><b>Naver Map</b> 導航</span>
+          <span><b>Kakao T</b> 叫車</span>
+          <span><b>Papago</b> 翻譯</span>
+          <span>Ticketlink</span>
+          <span>Interpark Ticket</span>
+          <span>樂天巨人官方</span>
+        </div>
+      </div>
+      <div class="check-group" style="margin-bottom:0">
+        <div class="grp-title">其他準備</div>
+        <ul class="checklist">
+          <li>購買 <b>T-money 交通卡</b>（仁川機場便利商店即售，入境即可加值）</li>
+          <li>評估 <b>KR PASS</b>（外國人鐵路通票；若只單程一次，買單張較划算）</li>
+          <li>備妥緊急聯絡：駐韓國台北代表部 ☎ +82-2-399-2780／24h 急難救助 +82-10-9080-2775</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 詳細行程 -->
+  <section class="block">
+    <div class="section-heading">📅 詳細行程規劃</div>
+
+    <!-- Day 1 -->
+    <div class="day">
+      <div class="day-head">
+        <div class="day-badge"><div class="d">D1</div><div class="dt">7/18 六</div></div>
+        <div class="title">抵達首爾，<span class="game">首戰蠶室</span></div>
+      </div>
+      <div class="slots">
+        <div class="slot"><div class="slot-label">上午・交通會合</div><div class="slot-body">
+          台北 中華航空 CI160（TPE 07:55 → ICN 11:30）／高雄 CI164（KHH 07:05 → ICN 11:00）。仁川 T2 會合後搭 <b>AREX 一般列車</b>（非直達！直達不停弘大）至弘大放行李。⏰ 約 13:30~14:00 安頓完畢。</div></div>
+        <div class="slot"><div class="slot-label">下午・弘大散步</div><div class="slot-body">
+          14:30 <b>延南洞</b>京義線林蔭道散步，品嚐特色咖啡廳與韓式小吃。
+          <div class="tip">💡 第一天剛落地，安排飯店附近景點最保險。</div></div></div>
+        <div class="slot rain"><div class="slot-label">晚上・熱血看球 🌧️</div><div class="slot-body">
+          16:30 前往 <b>蠶室棒球場</b>（綜合運動場站 <span class="kr">종합운동장 218</span>，約 30 分）。
+          <div class="game-line">⚾ KT 巫師 vs LG 雙子（18:00 開打）</div>
+          <div style="margin-top:6px">場內買 <b>炸雞配啤酒（Chi-maek）</b>體驗看球文化。</div>
+          <div class="rain-plan">🌧️ 露天球場，遇大雨可能延賽。備案：弘大商圈晚餐 + 逛街。</div></div></div>
+      </div>
+    </div>
+
+    <!-- Day 2 -->
+    <div class="day">
+      <div class="day-head">
+        <div class="day-badge"><div class="d">D2</div><div class="dt">7/19 日</div></div>
+        <div class="title">韓國潮流與文青復古</div>
+      </div>
+      <div class="slots">
+        <div class="slot"><div class="slot-label">上午・韓屋早午餐</div><div class="slot-body">
+          10:00 <b>益善洞韓屋村</b>（鐘路三街站 <span class="kr">종로3가 130/329/534</span>）。傳統韓屋巷弄，在「清水堂」或「溫水房」享用咖啡甜點。</div></div>
+        <div class="slot rain"><div class="slot-label">下午・首爾布魯克林 🌧️</div><div class="slot-body">
+          13:30 <b>聖水洞</b>（聖水站 <span class="kr">성수 211</span>）。逛廢棄工廠改建的快閃店（Dior、Tamburins）與選物店，吃「倫敦貝果博物館」或鹽麵包。
+          <div class="rain-plan">🌧️ 備案：COEX Mall 星空圖書館（三成站 삼성 219），室內逛整天。</div></div></div>
+        <div class="slot"><div class="slot-label">晚上・弘大夜生活</div><div class="slot-body">
+          18:30 回 <b>弘大商圈</b>（弘大入口站 <span class="kr">홍대입구 239</span>）看街頭表演。晚餐 <b>烤豬五花／烤牛腸</b>（小豬存錢筒，或新村「站著吃烤肉 서서갈비」性價比高）。</div></div>
+      </div>
+    </div>
+
+    <!-- Day 3 -->
+    <div class="day">
+      <div class="day-head">
+        <div class="day-badge"><div class="d">D3</div><div class="dt">7/20 一</div></div>
+        <div class="title">職棒休兵日・傳統市集</div>
+      </div>
+      <div class="slots">
+        <div class="slot"><div class="slot-label">上午・採購</div><div class="slot-body">
+          10:00 <b>首爾站樂天超市</b>（首爾站 <span class="kr">서울역 133/426/A01/P313</span>）大採購泡麵、零食、海苔，戰利品可寄回飯店或放寄物櫃。</div></div>
+        <div class="slot"><div class="slot-label">下午・廣藏市場</div><div class="slot-body">
+          13:30 <b>廣藏市場</b>（鐘路五街站 <span class="kr">종로5가 129</span>）。必吃綠豆煎餅、麻藥紫菜包飯、<b>生拌牛肉（Yukhoe）</b>配水梨絲。15:30 沿 <b>清溪川</b>散步消化。</div></div>
+        <div class="slot"><div class="slot-label">晚上・東大門一隻雞</div><div class="slot-body">
+          18:30 東大門（<span class="kr">동대문 128/421</span>）。晚餐 <b>陳玉華老奶奶一隻雞</b>。餐後逛 <b>DDP 東大門設計廣場</b>拍夜景。</div></div>
+      </div>
+    </div>
+
+    <!-- Day 4 -->
+    <div class="day">
+      <div class="day-head">
+        <div class="day-badge"><div class="d">D4</div><div class="dt">7/21 二</div></div>
+        <div class="title">巨蛋觀賽體驗・<span class="game">高尺巨蛋</span></div>
+      </div>
+      <div class="slots">
+        <div class="slot"><div class="slot-label">上午・梨大商圈</div><div class="slot-body">
+          10:30 <b>梨花女子大學商圈</b>（梨大站 <span class="kr">이대 241</span>）漫步校園、逛平價服飾。</div></div>
+        <div class="slot"><div class="slot-label">下午・漢江悠閒</div><div class="slot-body">
+          12:30 <b>The Hyundai Seoul 現代百貨</b>（汝矣島站 <span class="kr">여의도 526/915</span>），地下美食街吃韓式中華：炸醬麵、炒碼麵、糖醋肉。14:30 步行至 <b>汝矣島漢江公園</b>（여의나루 527），租野餐墊用自動煮麵機煮泡麵。</div></div>
+        <div class="slot"><div class="slot-label">晚上・巨蛋朝聖</div><div class="slot-body">
+          17:00 <b>高尺巨蛋</b>（九一站 <span class="kr">구일 142</span>，步行 15 分；或弘大計程車約 20 分／₩12,000）。
+          <div class="game-line">⚾ 三星獅 vs Kiwoom Heroes（18:30 開打）</div>
+          <div class="tip">💡 全室內球場，不受天候影響，三場中最穩定。</div></div></div>
+      </div>
+    </div>
+
+    <!-- Day 5 -->
+    <div class="day">
+      <div class="day-head">
+        <div class="day-badge"><div class="d">D5</div><div class="dt">7/22 三</div></div>
+        <div class="title">轉戰釜山・<span class="game">釜山狂熱</span></div>
+      </div>
+      <div class="slots">
+        <div class="slot"><div class="slot-label">上午・KTX 移動</div><div class="slot-body">
+          09:00 首爾站（<span class="kr">서울역</span>）搭 <b>KTX</b> 往釜山（約 2.5h／單程 ₩59,800）。
+          <div class="tip">💡 旺季建議提前 1 個月於 <a href="https://www.letskorail.com" target="_blank" rel="noopener">Korail 官網</a> 預訂。</div></div></div>
+        <div class="slot"><div class="slot-label">下午・南浦洞小吃</div><div class="slot-body">
+          12:30 抵釜山西面飯店（可先寄放行李）。14:00 <b>BIFF 廣場＆富平罐頭市場</b>（札嘎其站 <span class="kr">자갈치 110</span>），吃 <b>堅果黑糖餅</b>與魚糕串。順遊 <b>龍頭山公園＆釜山塔</b>（南浦站 남포 111）。</div></div>
+        <div class="slot rain"><div class="slot-label">晚上・社稷狂熱 🌧️</div><div class="slot-body">
+          17:00 <b>社稷球場</b>（綜合運動場站 <span class="kr">종합운동장 307</span> 或 社稷站 사직 308），人稱「全世界最大 KTV」。建議龍頭山搭計程車直達（約 ₩8,000）。
+          <div class="game-line">⚾ SSG 登陸者 vs 樂天巨人（18:30 開打）</div>
+          <div style="margin-top:6px">入境隨俗戴上橘色塑膠袋一起唱跳！</div>
+          <div class="rain-plan">🌧️ 露天球場，遇大雨可能延賽。備案：西面商圈晚餐 + 樂天百貨。</div></div></div>
+      </div>
+    </div>
+
+    <!-- Day 6 -->
+    <div class="day">
+      <div class="day-head">
+        <div class="day-badge"><div class="d">D6</div><div class="dt">7/23 四</div></div>
+        <div class="title">釜山無敵海景</div>
+      </div>
+      <div class="slots">
+        <div class="slot"><div class="slot-label">上午・Sky Capsule</div><div class="slot-body">
+          09:30 海雲台（海雲台站 <span class="kr">해운대 203</span> 或 中洞站 중동 202），搭 <b>海岸膠囊列車 Sky Capsule</b>（尾浦站乘車），青沙浦拍雙向平交道海景。
+          <div class="rain-plan" style="background:rgba(232,98,26,.1);color:var(--orange)">⚠️ 官網於出發前兩週週二開放預約（約 7/7），暑假秒殺！<a href="https://www.bluelinepark.com/eng/" target="_blank" rel="noopener">官網</a>或 Klook/KKday。每車最多 4 人，1 人也需買 2 人座。</div></div></div>
+        <div class="slot rain"><div class="slot-label">下午・甘川洞文化村 🌧️</div><div class="slot-body">
+          13:00 海雲台傳統市場吃 <b>烤盲鰻</b>或海鮮刀削麵。14:30 <b>甘川洞文化村</b>（土城站 <span class="kr">토성 109</span>轉社區公車），壁畫階梯巷弄找小王子雕像。
+          <div class="rain-plan">🌧️ 備案：新世界 Centum City（센텀시티 206）Spa Land 汗蒸幕，或電影體驗博物館。</div></div></div>
+        <div class="slot"><div class="slot-label">晚上・釜山靈魂美食</div><div class="slot-body">
+          18:00 回西面（<span class="kr">서면 119/219</span>），必吃 <b>豬肉湯飯（松亭三代）</b>。餐後 <b>The Bay 101</b>（冬柏站 동백 204）看小曼哈頓海洋夜景喝啤酒。</div></div>
+      </div>
+    </div>
+
+    <!-- Day 7 -->
+    <div class="day">
+      <div class="day-head">
+        <div class="day-badge"><div class="d">D7</div><div class="dt">7/24 五</div></div>
+        <div class="title">滿載而歸</div>
+      </div>
+      <div class="slots">
+        <div class="slot"><div class="slot-label">上午・最後採買</div><div class="slot-body">
+          09:30 西面地下街／樂天百貨（<span class="kr">서면 119/219</span>）補貨（人氣零食、Olive Young）。11:00 午餐 <b>密陽血腸豬肉湯飯</b>。12:00 出發前往釜山金海國際機場 PUS（金海輕軌 機場站 <span class="kr">공항 4</span>）。</div></div>
+        <div class="slot"><div class="slot-label">下午・平安返家</div><div class="slot-body">
+          返台北 釜山航空 BX791（PUS 14:15 🛫 → TPE 15:50 🛬）／返高雄 德威航空 TW675（PUS 15:00 🛫 → KHH 16:50 🛬）。</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 購票指南 -->
+  <section class="block">
+    <div class="section-heading">📌 附錄一：職棒購票指南</div>
+    <div class="notice" style="background:rgba(41,128,185,.1);border-color:rgba(58,160,216,.4);border-left-color:var(--sky)">
+      韓國職棒一般於 <b>比賽前 7 天</b>開放售票（韓國時間 11:00 或 14:00），各球隊系統不同。
+    </div>
+    <div class="card ticket">
+      <div class="tk-head"><div class="nm">7/18 蠶室棒球場（LG 雙子主場）</div><div class="diff">難度 ⭐⭐⭐</div></div>
+      <div class="row"><span class="k">平台</span>Ticketlink（Global 英文版）</div>
+      <div class="row"><span class="k">叮嚀</span>週末蠶室極易客滿！強烈建議前 7 天準時搶票，別指望現場購票。</div>
+    </div>
+    <div class="card ticket">
+      <div class="tk-head"><div class="nm">7/21 高尺巨蛋（Kiwoom Heroes 主場）</div><div class="diff">難度 ⭐⭐</div></div>
+      <div class="row"><span class="k">平台</span>Interpark Ticket（Global 英文版，對外國人最友善）</div>
+      <div class="row"><span class="k">叮嚀</span>直接刷海外信用卡，憑預約編號或 QR Code 現場換票。平日通常買得到。</div>
+    </div>
+    <div class="card ticket">
+      <div class="tk-head"><div class="nm">7/22 社稷球場（樂天巨人主場）</div><div class="diff">難度 ⭐⭐⭐⭐⭐</div></div>
+      <div class="row"><span class="k">平台</span>樂天巨人官方 APP／網站（需韓國電話實名認證，外國人極難自購）</div>
+      <div class="row"><span class="k">叮嚀</span>平日例行賽，提早 1.5–2h 到現場售票窗口買即可。要特區票請找韓國代購。</div>
+    </div>
+  </section>
+
+  <!-- 預算 -->
+  <section class="block">
+    <div class="section-heading">📌 附錄二：預算粗估</div>
+    <div class="card" style="padding:8px 12px">
+      <table class="budget">
+        <thead><tr><th>項目（每人，不含住宿機票）</th><th>預估費用</th></tr></thead>
+        <tbody>
+          <tr><td>KTX 首爾 → 釜山</td><td>₩59,800　<span style="color:var(--muted)">(~NT$1,500)</span></td></tr>
+          <tr><td>KBO 球票 × 3 場</td><td>₩45,000~90,000　<span style="color:var(--muted)">(~NT$1,100~2,300)</span></td></tr>
+          <tr><td>Sky Capsule 套票</td><td>~₩50,000　<span style="color:var(--muted)">(~NT$1,250)</span></td></tr>
+          <tr><td>地鐵交通（7 天）</td><td>~₩30,000　<span style="color:var(--muted)">(~NT$750)</span></td></tr>
+          <tr><td>餐費（7 天）</td><td>~₩350,000　<span style="color:var(--muted)">(~NT$8,750)</span></td></tr>
+          <tr class="total"><td>合計</td><td>~₩535,000~580,000　(~NT$13,400~14,500)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <a href="index.html" class="back-link">‹ 返回活動通知總覽</a>
+  <p><b>2026 小暑假韓國看球之旅</b></p>
+  <p>首爾進・釜山出　｜　Chi-maek · KBO · 海景 · 美食 ⚾🍗🌊</p>
+</footer>
+
+</body>
+</html>
