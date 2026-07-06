@@ -1,0 +1,993 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>把散落的工作文件，變成會幫你思考的知識庫 — LLM-Wiki 應用分享</title>
+<style>
+  :root{
+    --bg:#0f1226;
+    --bg2:#171a36;
+    --ink:#eef1ff;
+    --muted:#a9b0d6;
+    --faint:#6b73a3;
+    --accent:#7c9cff;
+    --accent2:#5fe0c0;
+    --warn:#ffb454;
+    --card:#1c2042;
+    --card2:#232850;
+    --line:#2e3566;
+    --good:#5fe0c0;
+    --bad:#ff7a93;
+    --shadow:0 18px 50px rgba(0,0,0,.45);
+    --radius:18px;
+    --maxw:1100px;
+    --font: "Segoe UI","Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:var(--font);
+    background:
+      radial-gradient(1200px 700px at 80% -10%, rgba(124,156,255,.18), transparent 60%),
+      radial-gradient(900px 600px at -10% 110%, rgba(95,224,192,.14), transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---- deck framing ---- */
+  .deck{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+  .slide{
+    position:absolute;inset:0;
+    display:none;
+    flex-direction:column;
+    justify-content:center;
+    padding:clamp(28px,5vw,80px) clamp(28px,7vw,120px);
+    animation:fade .45s ease;
+  }
+  .slide.active{display:flex}
+  @keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .inner{width:100%;max-width:var(--maxw);margin:0 auto}
+
+  /* ---- typography ---- */
+  h1{font-size:clamp(30px,4.6vw,58px);line-height:1.12;letter-spacing:-.5px;font-weight:800}
+  h2{font-size:clamp(24px,3.4vw,42px);line-height:1.15;font-weight:800;letter-spacing:-.3px}
+  h3{font-size:clamp(17px,1.7vw,22px);font-weight:700;color:var(--ink)}
+  p{font-size:clamp(15px,1.5vw,19px);line-height:1.65;color:var(--muted)}
+  .lead{font-size:clamp(18px,1.9vw,24px);color:var(--ink);line-height:1.6}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+    color:var(--accent2);margin-bottom:18px;
+  }
+  .kicker::before{content:"";width:26px;height:2px;background:var(--accent2);border-radius:2px}
+  .accent{color:var(--accent)}
+  .accent2{color:var(--accent2)}
+  .warn{color:var(--warn)}
+  strong{color:var(--ink)}
+  .big-num{font-size:clamp(40px,6vw,80px);font-weight:800;line-height:1;background:linear-gradient(120deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+  /* ---- layout helpers ---- */
+  .grid{display:grid;gap:20px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .mt{margin-top:26px}.mt2{margin-top:40px}
+  .center{text-align:center}
+
+  .card{
+    background:linear-gradient(180deg,var(--card),var(--card2));
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:24px 24px;
+    box-shadow:var(--shadow);
+  }
+  .card h3{margin-bottom:8px;display:flex;align-items:center;gap:10px}
+  .card p{font-size:15px;line-height:1.55}
+  .ico{font-size:26px;line-height:1}
+  .chip{
+    display:inline-block;padding:5px 12px;border-radius:999px;
+    background:rgba(124,156,255,.14);border:1px solid var(--line);
+    color:var(--accent);font-size:13px;font-weight:700;margin:4px 6px 0 0;
+  }
+
+  ul.clean{list-style:none}
+  ul.clean li{position:relative;padding-left:30px;margin:14px 0;font-size:clamp(15px,1.5vw,19px);color:var(--muted);line-height:1.5}
+  ul.clean li::before{content:"";position:absolute;left:4px;top:.55em;width:9px;height:9px;border-radius:3px;background:var(--accent2);box-shadow:0 0 12px var(--accent2)}
+  ul.clean li b{color:var(--ink)}
+
+  /* flow diagram */
+  .flow{display:flex;align-items:stretch;gap:14px;flex-wrap:wrap;justify-content:center}
+  .flow .node{
+    flex:1;min-width:150px;
+    background:linear-gradient(180deg,var(--card),var(--card2));
+    border:1px solid var(--line);border-radius:16px;padding:20px 18px;text-align:center;
+  }
+  .flow .node .ico{font-size:34px}
+  .flow .node h3{justify-content:center;margin:10px 0 6px}
+  .flow .arrow{display:flex;align-items:center;color:var(--accent);font-size:30px;font-weight:800}
+  @media(max-width:760px){.flow .arrow{transform:rotate(90deg)}}
+
+  /* layered architecture */
+  .layers{display:flex;flex-direction:column;gap:14px}
+  .layer{
+    display:flex;align-items:center;gap:20px;
+    border:1px solid var(--line);border-radius:16px;padding:18px 24px;
+    background:linear-gradient(90deg,var(--card),var(--card2));
+  }
+  .layer .tag{flex:0 0 auto;font-weight:800;font-size:14px;letter-spacing:1px;padding:7px 12px;border-radius:10px}
+  .layer .body h3{margin-bottom:4px}
+  .layer .body p{font-size:14px}
+  .l-raw .tag{background:rgba(255,180,84,.16);color:var(--warn);border:1px solid rgba(255,180,84,.3)}
+  .l-wiki .tag{background:rgba(95,224,192,.16);color:var(--accent2);border:1px solid rgba(95,224,192,.3)}
+  .l-skill .tag{background:rgba(124,156,255,.16);color:var(--accent);border:1px solid rgba(124,156,255,.3)}
+
+  /* compare table */
+  table{width:100%;border-collapse:collapse;font-size:clamp(14px,1.4vw,17px)}
+  th,td{padding:14px 16px;text-align:left;border-bottom:1px solid var(--line)}
+  th{color:var(--faint);font-weight:700;font-size:13px;letter-spacing:.5px;text-transform:uppercase}
+  td.old{color:var(--muted)}
+  td.new{color:var(--ink);font-weight:600}
+  .vs-old{color:var(--bad)}.vs-new{color:var(--good)}
+
+  /* code/note mock */
+  .note{
+    background:#0c0f24;border:1px solid var(--line);border-radius:14px;
+    font-family:"Cascadia Code","Consolas","SF Mono",monospace;font-size:14px;line-height:1.7;
+    padding:18px 20px;color:#cdd3ff;overflow:auto;
+    white-space:pre-wrap;word-break:break-word;
+  }
+  .note .fm{color:var(--warn)}
+  .note .k{color:var(--accent)}
+  .note .link{color:var(--accent2)}
+  .note .cmt{color:var(--faint)}
+
+  .quote{border-left:3px solid var(--accent2);padding:6px 0 6px 22px;font-size:clamp(18px,2vw,26px);line-height:1.5;color:var(--ink);font-weight:600}
+
+  /* progress + chrome */
+  .progress{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:50;transition:width .35s ease}
+  .pager{position:fixed;bottom:18px;right:26px;font-size:13px;color:var(--faint);z-index:50;letter-spacing:1px}
+  .brand{position:fixed;bottom:18px;left:26px;font-size:13px;color:var(--faint);z-index:50;letter-spacing:.5px}
+  .hint{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);font-size:12px;color:var(--faint);z-index:50;opacity:.8}
+  .nav{position:fixed;inset:0;z-index:5;display:flex;justify-content:space-between;pointer-events:none}
+  .nav .half{flex:1;pointer-events:auto;cursor:pointer}
+
+  .pill{display:inline-block;padding:6px 14px;border-radius:999px;background:rgba(124,156,255,.12);border:1px solid var(--line);color:var(--accent);font-weight:700;font-size:14px}
+  .footnote{font-size:13px;color:var(--faint);margin-top:18px}
+  .step-n{font-size:14px;font-weight:800;color:var(--accent2);letter-spacing:2px}
+
+  @media(max-width:760px){
+    .g2,.g3{grid-template-columns:1fr}
+    .slide{padding:24px 20px}
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="brand">LLM-Wiki · 工作知識庫分享</div>
+<div class="pager"><span id="cur">1</span> / <span id="tot">1</span></div>
+
+<div class="deck" id="deck">
+
+  <!-- 1. 封面 -->
+  <section class="slide active">
+    <div class="inner center">
+      <div class="kicker" style="justify-content:center">內部分享 · LLM-Wiki</div>
+      <h1>把散落的工作文件<br>變成一個<span class="accent">會幫你思考</span>的知識庫</h1>
+      <p class="lead mt">用一套有效率的方式，把你散落各處的工作資料整理成<strong>私有知識庫</strong>，<br>並透過它讓 AI 更精準地協助、分析你的工作。</p>
+      <p class="footnote" style="font-size:15px;color:var(--muted)">它不是取代人的判斷，而是把資料整理成 <strong class="accent2">AI 能反覆使用的工作記憶</strong>。</p>
+      <div class="mt2">
+        <span class="chip">概念緣起</span>
+        <span class="chip">核心內容</span>
+        <span class="chip">適用場景</span>
+        <span class="chip">案例 Demo</span>
+        <span class="chip">如何開始</span>
+      </div>
+      <p class="footnote">分享人：JC　·　以右方向鍵 / 空白鍵翻頁</p>
+    </div>
+  </section>
+
+  <!-- 2. 痛點 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="kicker">先問一個問題</div>
+      <h2>你的工作知識，現在<span class="warn">散落在哪裡</span>？</h2>
+      <div class="grid g3 mt2">
+        <div class="card"><h3><span class="ico">🗂️</span>到處都是檔案</h3><p>共用磁碟、桌面、Email、Excel、PDF、會議記錄、聊天訊息……同一件事散在十個地方。</p><p style="color:var(--warn);font-style:italic;margin-top:8px;font-size:14px">「上次那份 Excel 是誰改的？決議在哪一版？」</p></div>
+        <div class="card"><h3><span class="ico">🔍</span>找不到、想不起</h3><p>明明看過，卻得重新翻、重新問、重新想。</p><p style="color:var(--warn);font-style:italic;margin-top:8px;font-size:14px">「主管臨時問一個數字，我知道看過，卻找不到。」</p></div>
+        <div class="card"><h3><span class="ico">🔁</span>重複推導</h3><p>同樣的整理、同樣的分析，半年後又從零做一次。</p><p style="color:var(--warn);font-style:italic;margin-top:8px;font-size:14px">「新人問我這個流程，我又得從頭講一次。」</p></div>
+      </div>
+      <p class="lead mt2 center">問題不是「資料太少」，而是 <strong>知識沒有被整理、累積、可被再利用</strong>。</p>
+    </div>
+  </section>
+
+  <!-- 3. 比喻 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="kicker">換個角度想</div>
+      <h2>一個塞滿的抽屜　vs.　一個整理過的大腦</h2>
+      <div class="grid g2 mt2">
+        <div class="card" style="border-color:rgba(255,122,147,.35)">
+          <h3><span class="ico">🗄️</span>傳統資料夾</h3>
+          <ul class="clean">
+            <li>東西都「<b>放著</b>」，但沒人整理</li>
+            <li>找資料 = 翻箱倒櫃 + 靠記性</li>
+            <li>資料之間<b>沒有關聯</b></li>
+            <li>越積越多，越來越難用</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color:rgba(95,224,192,.4)">
+          <h3><span class="ico">🧠</span>LLM-Wiki 知識庫</h3>
+          <ul class="clean">
+            <li>每份資料都被<b>讀過、摘要、連結</b></li>
+            <li>用<b>問問題</b>的方式取用知識</li>
+            <li>概念彼此<b>交叉引用</b>成網路</li>
+            <li>越用越聰明，知識持續累積</li>
+          </ul>
+        </div>
+      </div>
+      <p class="lead mt2 center">差別在於——有一位<strong class="accent2">不會累的助理</strong>，幫你把所有資料整理進大腦並隨時更新。</p>
+    </div>
+  </section>
+
+  <!-- 4. 緣起 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="kicker">概念緣起</div>
+      <h2>靈感來自 Karpathy 的「<span class="accent">LLM Wiki</span>」</h2>
+      <p class="lead mt">AI 領域知名研究者 <strong>Andrej Karpathy</strong> 提出一個想法：與其每次都讓 AI 從頭讀一堆資料重新推論，不如讓它維護一份<strong>持久的知識庫</strong>。</p>
+      <div class="quote mt2">知識應該「一次編譯、持續更新」，<br>而不是每次都重新推導。</div>
+      <div class="grid g2 mt2">
+        <div class="card"><h3><span class="ico">👤</span>人負責</h3><p>提供<b>原始資料</b>，以及<b>提問</b>。就這兩件事。</p></div>
+        <div class="card"><h3><span class="ico">🤖</span>AI 負責</h3><p>寫摘要、建立交叉引用、保持一致性、追蹤矛盾——<b>所有維護工作</b>。</p></div>
+      </div>
+      <p class="lead mt2 center">這不是一套特定產品或軟體，而是一種<strong class="accent2">知識管理方法</strong>——讓 LLM 維護一份能持續更新的 wiki。</p>
+      <p class="footnote">原始出處（Karpathy 親筆）：<a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f" target="_blank" rel="noopener" style="color:var(--accent2);text-decoration:underline">gist.github.com/karpathy/442a6bf…</a>　·　本分享將它落實為公司日常可用的做法。</p>
+    </div>
+  </section>
+
+  <!-- 5. 對照 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="kicker">它解決了什麼</div>
+      <h2>傳統做法　vs.　LLM-Wiki</h2>
+      <table class="mt2">
+        <tr><th>情境</th><th class="vs-old">以前怎麼做</th><th class="vs-new">用 LLM-Wiki</th></tr>
+        <tr><td>整理新資料</td><td class="old">自己讀、自己摘要、自己歸檔</td><td class="new">丟進去，AI 讀完寫摘要並接上相關頁面</td></tr>
+        <tr><td>找答案</td><td class="old">翻檔案、問同事、靠記憶</td><td class="new">直接提問，得到<b>帶出處</b>的答案</td></tr>
+        <tr><td>知識累積</td><td class="old">做完就忘，下次重來</td><td class="new">結論自動回填，<b>越問越完整</b></td></tr>
+        <tr><td>一致性</td><td class="old">不同檔案說法打架沒人發現</td><td class="new">定期健檢，主動找出矛盾與過時</td></tr>
+        <tr><td>需要的工具</td><td class="old">各種系統、資料庫</td><td class="new"><b>純文字檔</b>即可，不需資料庫</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 6. 三層架構 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="kicker">核心內容 · 1</div>
+      <h2>三層架構：原料、知識、規則</h2>
+      <div class="layers mt2">
+        <div class="layer l-raw">
+          <div class="tag">RAW</div>
+          <div class="body"><h3>原始資料層（唯讀，永不修改）</h3><p>你丟進來的東西：Excel、PDF、會議記錄、文件、圖片。原檔保留不動，永遠可回溯。</p></div>
+        </div>
+        <div class="layer l-wiki">
+          <div class="tag">WIKI</div>
+          <div class="body"><h3>知識層（AI 維護）</h3><p>AI 編寫的筆記頁面，彼此用連結串成網路；含一個<b>目錄</b>入口與一份<b>操作日誌</b>。</p></div>
+        </div>
+        <div class="layer l-skill">
+          <div class="tag">規則</div>
+          <div class="body"><h3>規範層（Skill）</h3><p>一份「遊戲規則」，告訴 AI 該怎麼整理、命名、連結、檢查。一次設定，之後自動遵守。</p></div>
+        </div>
+      </div>
+      <div class="grid g2 mt2" style="align-items:center">
+        <div class="note" style="font-size:13px">my-llm-wiki/
+├─ raw/            <span class="cmt">← 你丟進來的原始檔（不動）</span>
+│  ├─ 2025年度策略會議.pdf
+│  ├─ 行銷月報Q4.xlsx
+│  └─ 外包需求確認信.eml
+├─ wiki/           <span class="cmt">← AI 維護的知識</span>
+│  ├─ index.md
+│  ├─ 年度目標.md
+│  ├─ 行銷預算分析.md
+│  └─ 外包-A專案.md
+└─ CLAUDE.md       <span class="cmt">← 規則（Skill）</span></div>
+        <p class="lead">看到資料夾就懂了：<br>你只碰最上面那層（丟資料、問問題）；<br><strong class="accent2">中間的知識整理，AI 全包</strong>。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. 你只做兩件事 -->
+  <section class="slide">
+    <div class="inner center">
+      <div class="kicker" style="justify-content:center">核心內容 · 2</div>
+      <h2>你只需要做<span class="accent">兩件事</span></h2>
+      <div class="grid g2 mt2" style="max-width:760px;margin-left:auto;margin-right:auto">
+        <div class="card"><div class="big-num">1</div><h3 class="mt">給原始資料</h3><p>把檔案丟進 <b>raw/</b> 資料夾。</p></div>
+        <div class="card"><div class="big-num">2</div><h3 class="mt">提出問題</h3><p>用自然語言問你想知道的事。</p></div>
+      </div>
+      <p class="lead mt2">其餘的——讀資料、寫摘要、建連結、查一致性——<br><strong class="accent2">全部交給 AI 維護。</strong></p>
+    </div>
+  </section>
+
+  <!-- 8. 三個操作 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="kicker">核心內容 · 3</div>
+      <h2>三個核心操作</h2>
+      <div class="flow mt2">
+        <div class="node"><div class="ico">📥</div><h3>Ingest 匯入</h3><p>丟新資料進來，AI 讀懂後整理進知識庫。</p></div>
+        <div class="arrow">→</div>
+        <div class="node"><div class="ico">💬</div><h3>Query 提問</h3><p>問問題，得到帶出處的答案，結論回填。</p></div>
+        <div class="arrow">→</div>
+        <div class="node"><div class="ico">🩺</div><h3>Lint 健檢</h3><p>定期體檢，找矛盾、孤立頁、缺漏。</p></div>
+      </div>
+      <p class="lead mt2 center">三個動作循環往復，知識庫就<strong>越長越好</strong>。</p>
+    </div>
+  </section>
+
+  <!-- 9. Ingest -->
+  <section class="slide">
+    <div class="inner">
+      <span class="pill">📥 操作一</span>
+      <h2 class="mt">Ingest — 把新資料「吃」進來</h2>
+      <div class="grid g2 mt2" style="align-items:center">
+        <div>
+          <ul class="clean">
+            <li>把檔案放進 <b>raw/</b>，跟 AI 說：「<b>整理這份資料</b>」</li>
+            <li>AI 讀完，理解核心概念</li>
+            <li>新增或更新相關<b>筆記頁面</b>（一份資料可能影響多頁）</li>
+            <li>更新<b>目錄</b>，並在<b>日誌</b>記下：日期、來源、改了哪些頁</li>
+            <li>遇到流程圖、流程表，會<b>原樣重繪</b>保留在筆記裡</li>
+          </ul>
+        </div>
+        <div class="note">
+<span class="cmt"># 你說：</span>
+整理 raw/2025年度策略會議記錄.pdf
+
+<span class="cmt"># AI 做：</span>
+✓ 讀取來源、擷取重點
+✓ 新增 <span class="link">[[會議-2025策略會議]]</span>
+✓ 更新 <span class="link">[[年度目標]]</span>、<span class="link">[[預算規劃]]</span>
+✓ 更新 index 目錄
+✓ 記入 log 日誌
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. Query -->
+  <section class="slide">
+    <div class="inner">
+      <span class="pill">💬 操作二</span>
+      <h2 class="mt">Query — 用問問題的方式取用知識</h2>
+      <div class="grid g2 mt2" style="align-items:center">
+        <div>
+          <ul class="clean">
+            <li>直接用<b>白話</b>問，不用記檔名</li>
+            <li>AI 搜尋知識庫、讀相關頁，給出<b>帶引用</b>的答案</li>
+            <li>看得到答案<b>來自哪一頁、哪份原始資料</b>——可追溯、可信任</li>
+            <li>若答案值得保存，<b>自動回填</b>成新頁面</li>
+            <li>下次同樣的問題，<b>直接引用、不必重算</b></li>
+          </ul>
+        </div>
+        <div class="note">
+<span class="cmt"># 你問：</span>
+我們去年的行銷預算花在哪？成效如何？
+
+<span class="cmt"># AI 答（節錄）：</span>
+主要投放在 A 通路（佔 60%）……
+成效見 <span class="link">[[行銷成效-2025]]</span>。
+<span class="k">出處：</span><span class="link">[[會議-2025策略會議]]</span>、
+　　　<span class="link">[[raw/行銷月報Q4]]</span>
+
+<span class="cmt"># 結論已存入 [[行銷預算分析]]</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. Lint -->
+  <section class="slide">
+    <div class="inner">
+      <span class="pill">🩺 操作三</span>
+      <h2 class="mt">Lint — 幫知識庫做健康檢查</h2>
+      <p class="lead mt">知識庫養大之後，難免有資料打架或被遺忘。隔一陣子讓 AI 體檢一次：</p>
+      <div class="grid g3 mt2">
+        <div class="card"><h3><span class="ico">⚔️</span>矛盾／過時</h3><p>兩頁說法不一致、或數字已被新資料推翻，主動標記出來。</p></div>
+        <div class="card"><h3><span class="ico">🏝️</span>孤立頁面</h3><p>沒有被任何頁面連到的「孤兒」，提醒你補上關聯。</p></div>
+        <div class="card"><h3><span class="ico">🔗</span>缺漏引用</h3><p>相關但還沒互連的概念，建議補上交叉引用。</p></div>
+      </div>
+      <p class="lead mt2 center">讓知識庫<strong class="accent2">不只變大，還能保持乾淨可信</strong>。</p>
+    </div>
+  </section>
+
+  <!-- 12. 長什麼樣子 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="kicker">它長什麼樣子</div>
+      <h2>每一頁筆記，都是一份<span class="accent">純文字檔</span></h2>
+      <div class="grid g2 mt2" style="align-items:center">
+        <div class="note">
+<span class="fm">---</span>
+<span class="k">title:</span> 行銷預算分析
+<span class="k">tags:</span> [行銷, 預算, 2025]
+<span class="k">sources:</span>
+  - <span class="link">"[[raw/行銷月報Q4]]"</span>
+  - <span class="link">"[[會議-2025策略會議]]"</span>
+<span class="k">updated:</span> 2026-06-29
+<span class="fm">---</span>
+
+# 行銷預算分析
+
+2025 全年投放以 A 通路為主……
+詳見 <span class="link">[[行銷成效-2025]]</span> 與
+<span class="link">[[通路比較]]</span>。
+        </div>
+        <div>
+          <ul class="clean">
+            <li><b>標頭</b>：標題、標籤、來源、更新日期一目了然</li>
+            <li><b>來源</b>：每個結論都連回原始資料，可追溯</li>
+            <li><b>連結</b>：<span class="accent2">[[雙括號]]</span> 把相關頁面串成知識網</li>
+            <li><b>純 markdown</b>：用記事本就能開，永遠讀得到</li>
+            <li>可用 <b>Obsidian</b> 開啟，看到頁面間的<b>關係圖</b></li>
+          </ul>
+          <p class="footnote">純文字 = 不被任何軟體綁架、可用 Git 追蹤版本、十年後依然打得開。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13. 適用場景 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="kicker">適用場景</div>
+      <h2>幾乎每種工作，都有它的用武之地</h2>
+      <div class="grid g3 mt2">
+        <div class="card"><h3><span class="ico">📊</span>財務／報表</h3><p>把歷年報表整理成可追問的趨勢與結論。</p></div>
+        <div class="card"><h3><span class="ico">📈</span>營運數據分析</h3><p>把多輪調查的假說、驗證、結論累積成一條清楚的脈絡。</p></div>
+        <div class="card"><h3><span class="ico">🗂️</span>專案文件</h3><p>會議記錄、規格、決議集中管理，隨時問現況。</p></div>
+        <div class="card"><h3><span class="ico">📝</span>會議記錄</h3><p>每次會議丟進去，自動串接相關決議與待辦。</p></div>
+        <div class="card"><h3><span class="ico">📚</span>知識／研究</h3><p>把論文、報告、筆記整理成自己的領域大腦。</p></div>
+        <div class="card"><h3><span class="ico">🧳</span>個人生活</h3><p>旅遊規劃、家庭文件、學習筆記也通通適用。</p></div>
+      </div>
+      <p class="lead mt2 center">只要你有「<strong>一堆資料、想被整理並隨時取用</strong>」的需求，它就適合。</p>
+    </div>
+  </section>
+
+  <!-- 14. Demo 1 -->
+  <section class="slide">
+    <div class="inner">
+      <span class="pill">案例 Demo · 1</span>
+      <h2 class="mt">把 16 年的報表，變成<span class="accent">一句話 + 可追問</span></h2>
+      <div class="grid g2 mt2" style="align-items:center">
+        <div>
+          <ul class="clean">
+            <li>丟進 <b>十多份歷年 Excel 報表</b></li>
+            <li>AI 自動擷取、對齊、寫成數頁主題筆記（總覽、結構、趨勢…）</li>
+            <li>產出<b>趨勢圖表</b>並附在頁面裡</li>
+            <li>目錄頁直接給你一段「<b>一句話結論</b>」</li>
+            <li>之後任何細節都能<b>直接問</b>，答案帶出處</li>
+          </ul>
+          <p class="footnote">＊以下為去敏化示意，數字非真實財務數據。</p>
+        </div>
+        <div class="card">
+          <h3><span class="ico">🧭</span>目錄頁的「一句話結論」</h3>
+          <p style="color:var(--ink);line-height:1.6">「公司從以<b>硬體</b>為主，轉型為以<b>授權／權利金</b>為核心引擎的高毛利模式；成長來自毛利率提升＋費用攤薄，但伴隨<b>單一產品集中度偏高</b>的風險。」</p>
+          <div style="margin-top:14px">
+            <span class="chip">營收趨勢？</span><span class="chip">毛利怎麼變的？</span><span class="chip">集中度風險？</span>
+          </div>
+          <p class="footnote">每個問題點下去 → 帶出處的詳答。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15. Demo 2 -->
+  <section class="slide">
+    <div class="inner">
+      <span class="pill">案例 Demo · 2</span>
+      <h2 class="mt">營運分析：把一場<span class="accent">調查歷程</span>沉澱下來</h2>
+      <p class="lead mt">營運數據分析常常是「猜一個原因 → 查 → 推翻 → 再猜」反覆很多輪。知識庫把<strong>整條思路</strong>保留下來，不再每次重來。</p>
+      <div class="flow mt2">
+        <div class="node"><div class="ico">❓</div><h3>提出假說</h3><p>「某指標下滑是因為 X？」</p></div>
+        <div class="arrow">→</div>
+        <div class="node"><div class="ico">🔬</div><h3>查證</h3><p>拉資料驗證，記錄方法與結果</p></div>
+        <div class="arrow">→</div>
+        <div class="node"><div class="ico">♻️</div><h3>推翻／修正</h3><p>標記「此版本已推翻」，迭代下一版</p></div>
+        <div class="arrow">→</div>
+        <div class="node"><div class="ico">✅</div><h3>累積結論</h3><p>確認的發現存進結論頁</p></div>
+      </div>
+      <p class="lead mt2 center">半年後新人接手，<strong class="accent2">一頁就看懂「為什麼當初這樣判斷」</strong>——含走過的彎路。</p>
+    </div>
+  </section>
+
+  <!-- 15b. 進階延伸：接上資料庫 -->
+  <section class="slide">
+    <div class="inner">
+      <span class="pill">進階延伸</span>
+      <h2 class="mt">再接上<span class="accent">營運資料庫</span>，威力升級</h2>
+      <p class="lead mt">把 AI 連上即時的營運 log 資料庫，再搭配知識庫裡的<strong>先備知識</strong>——這正是讓分析「自己跑起來」的關鍵組合。</p>
+      <div class="flow mt2" style="font-size:14px">
+        <div class="node"><div class="ico">🤖</div><h3>LLM</h3><p>Claude Code</p></div>
+        <div class="arrow">＋</div>
+        <div class="node"><div class="ico">🗄️</div><h3>營運 log 資料庫</h3><p>即時、完整的原始數據</p></div>
+        <div class="arrow">＋</div>
+        <div class="node"><div class="ico">🧠</div><h3>LLM-Wiki 先備知識</h3><p>指標定義、業務脈絡、歷史結論</p></div>
+        <div class="arrow">＝</div>
+        <div class="node" style="border-color:rgba(95,224,192,.5)"><div class="ico">⚡</div><h3 class="accent2">自助式營運分析</h3><p>幾乎能獨立完成</p></div>
+      </div>
+      <div class="grid g2 mt2" style="align-items:center">
+        <div>
+          <ul class="clean">
+            <li>自己<b>撈數據</b>——直接查資料庫，不必等人寫 SQL</li>
+            <li>用 wiki 的脈絡<b>正確解讀</b>：指標怎麼定義、過去結論、走過的彎路</li>
+            <li>自動<b>發現異常、提假說、驗證、產報表</b></li>
+            <li>例行的撈數、製表、月報——<b>大幅自動化</b></li>
+          </ul>
+        </div>
+        <div class="card" style="border-color:rgba(95,224,192,.4)">
+          <h3><span class="ico">💡</span>實務體驗</h3>
+          <p style="color:var(--ink)">接上資料庫後，<b>撈數、解讀、產報表</b>這些例行分析幾乎能由系統獨立完成。</p>
+          <p style="color:var(--ink);margin-top:10px">但這不是要取代誰——而是把人從重複勞動中釋放出來，<strong class="accent2">升級為提問者與決策者</strong>，讓一個人發揮過去整個團隊的產出。</p>
+        </div>
+      </div>
+      <div class="card mt2" style="border-color:rgba(255,180,84,.4);padding:14px 22px">
+        <p style="color:var(--ink);font-size:14px;line-height:1.7"><b class="warn">🔒 給 IT／資安的建議限制（說服關鍵）：</b>　①只用 <b>read-only 唯讀帳號</b>　②僅開放特定 <b>schema／view</b>　③查詢結果回寫 wiki 前<b>需人工確認</b>。AI 只能查、不能改動營運資料。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 不同職務怎麼用（速覽）：主線聚焦，下方為可略過的深入版 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="kicker">不同職務怎麼用</div>
+      <h2>三種角色，<span class="accent">一頁速覽</span></h2>
+      <p class="lead mt">同一套方法，換個身分就有不同用法（下面幾頁是各角色的深入版，時間不夠可略過）：</p>
+      <div class="grid g3 mt2">
+        <div class="card"><h3><span class="ico">⌨️</span>系統開發</h3><p>架構決策、事故根因、API 協定搬出腦袋。</p><p style="color:var(--accent2);font-style:italic;margin-top:8px;font-size:14px">「改登入流程會牽動哪些服務？」</p></div>
+        <div class="card"><h3><span class="ico">🤝</span>內外包窗口</h3><p>需求、決議、驗收建立同一個事實來源。</p><p style="color:var(--accent2);font-style:italic;margin-top:8px;font-size:14px">「這需求變更誰拍板的？差在哪？」</p></div>
+        <div class="card"><h3><span class="ico">📋</span>主管／PM</h3><p>跨專案進度、風險、待辦一手掌握。</p><p style="color:var(--accent2);font-style:italic;margin-top:8px;font-size:14px">「這週各專案紅燈項目有哪些？」</p></div>
+      </div>
+      <p class="lead mt2 center">從「追著各團隊要狀態」變成「<strong class="accent2">直接問知識庫</strong>」。</p>
+    </div>
+  </section>
+
+  <!-- Demo 6：通用 -->
+  <section class="slide">
+    <div class="inner">
+      <span class="pill">案例 Demo · 6</span>
+      <h2 class="mt">通用範例：連<span class="accent">個人生活</span>都好用</h2>
+      <div class="grid g2 mt2">
+        <div class="card">
+          <h3><span class="ico">🧳</span>旅遊規劃</h3>
+          <p>把行程、票券、訂房確認信、攻略全丟進去，問：「第三天早上有什麼安排？預算還剩多少？」</p>
+        </div>
+        <div class="card">
+          <h3><span class="ico">🗓️</span>會議＋待辦</h3>
+          <p>每次會議記錄匯入，問：「上週決議的事項，誰負責、進度到哪？」結論自動串起來。</p>
+        </div>
+      </div>
+      <p class="lead mt2 center">同一套方法，<strong>工作與生活通用</strong>——學一次，到處能用。</p>
+    </div>
+  </section>
+
+  <!-- 17. 為什麼對你有幫助 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="kicker">為什麼對你的工作有幫助</div>
+      <h2>五個立刻有感的好處</h2>
+      <div class="grid g2 mt2">
+        <div class="card"><h3><span class="ico">⏱️</span>省時間</h3><p>找資料、寫摘要、整理交給 AI，你專注在判斷與決策。</p></div>
+        <div class="card"><h3><span class="ico">🎯</span>答案可信</h3><p>每個結論都帶出處，不是 AI 瞎掰，看得到來源。</p></div>
+        <div class="card"><h3><span class="ico">📈</span>越用越強</h3><p>知識持續累積，不會做完就忘、每次重來。</p></div>
+        <div class="card"><h3><span class="ico">🔒</span>完全私有</h3><p>放在自己電腦的純文字檔，資料不外流、可自行控管。</p></div>
+        <div class="card" style="grid-column:1 / -1;border-color:rgba(95,224,192,.4)"><h3><span class="ico">🤝</span>好交接　<span class="chip">最重要</span></h3><p>知識留在知識庫，不會跟著人走——<b>交接、協作、傳承</b>都更輕鬆，新人一頁就上手。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 先回答三個疑慮（提前降低抗拒） -->
+  <section class="slide">
+    <div class="inner">
+      <div class="kicker">先回答三個疑慮</div>
+      <h2>開始之前，你可能會<span class="accent">先想問</span></h2>
+      <div class="grid g3 mt2">
+        <div class="card"><h3><span class="ico">🔒</span>安全嗎？</h3><p>資料放在<b>本機</b>；要上雲用 GitHub <b>Private 私有儲存庫</b>；<b>高敏感資料不上雲</b>，接資料庫只用唯讀帳號。</p></div>
+        <div class="card"><h3><span class="ico">🎯</span>可信嗎？</h3><p>答案<b>必須帶來源</b>，可點回原始資料查證；重要結論<b>人工確認</b>——AI 草擬、人審核。</p></div>
+        <div class="card"><h3><span class="ico">🙂</span>難嗎？</h3><p>從<b>一個資料夾、一份文件</b>開始，不必一次導入全部；簡易版<b>完全不用碰 Git</b>。</p></div>
+      </div>
+      <p class="lead mt2 center">這三點後面 FAQ 還會更詳細——先放心，<strong class="accent2">門檻比你想的低</strong>。</p>
+    </div>
+  </section>
+
+  <!-- 18. 架構總覽 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="kicker">這套架構長怎樣</div>
+      <h2>四個工具，<span class="accent">各司其職</span></h2>
+      <div class="grid g2 mt2">
+        <div class="card"><h3><span class="ico">🤖</span>Claude Code　<span class="chip">知識管理員</span></h3><p>讀原始資料、寫摘要、建立交叉連結、做健康檢查。所有<b>維護工作</b>由它執行——這是你下指令的對象。</p></div>
+        <div class="card"><h3><span class="ico">📁</span>知識庫檔案　<span class="chip">純文字</span></h3><p><b>raw/</b>（原始資料）＋<b>wiki/</b>（整理後的筆記），存在你自己的電腦，全是 markdown 文字檔。</p></div>
+        <div class="card"><h3><span class="ico">🔮</span>Obsidian　<span class="chip">閱讀器</span></h3><p>用來<b>瀏覽</b>整理好的筆記、點 <span class="accent2">[[連結]]</span> 跳轉，並看到頁面之間的<b>關係圖</b>。</p></div>
+        <div class="card" style="border-color:rgba(95,224,192,.35)"><h3><span class="ico">🛡️</span>Git + GitHub　<span class="chip">時光機＋保險箱</span></h3><p>每次變動都留一個<b>版本</b>；萬一知識庫被改壞或誤刪，可<b>一鍵還原</b>，並異地雲端備份。</p></div>
+      </div>
+      <div class="flow mt2" style="font-size:14px">
+        <div class="node"><div class="ico">👤</div><h3>你丟資料／提問</h3></div>
+        <div class="arrow">→</div>
+        <div class="node"><div class="ico">🤖</div><h3>Claude Code 整理</h3></div>
+        <div class="arrow">→</div>
+        <div class="node"><div class="ico">🔮</div><h3>Obsidian 閱讀</h3></div>
+        <div class="arrow">→</div>
+        <div class="node"><div class="ico">🛡️</div><h3>Git 留存版本</h3></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 19. 安裝步驟 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="kicker">安裝方式</div>
+      <h2>兩種方案：<span class="accent">先簡單體驗，再正式上線</span></h2>
+      <div class="grid g2 mt2" style="align-items:start">
+        <div class="card" style="border-color:rgba(95,224,192,.45)">
+          <h3><span class="ico">🟢</span>簡易版　<span class="chip">新手先用這個</span></h3>
+          <p style="color:var(--muted);font-size:14px;margin:6px 0 4px">不碰 Git，先體驗到價值再說。</p>
+          <ul class="clean" style="margin-top:0">
+            <li><b>Obsidian</b>（obsidian.md，免費）— 瀏覽筆記</li>
+            <li><b>Claude Code</b>（桌面版最簡單）— 維護知識庫</li>
+            <li>一個<b>本機資料夾</b>（內含 raw/ 與 wiki/）</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><span class="ico">🔵</span>正式版　<span class="chip">要備份再升級</span></h3>
+          <p style="color:var(--muted);font-size:14px;margin:6px 0 4px">想要版本控管與雲端備份時，再加這兩個。</p>
+          <ul class="clean" style="margin-top:0">
+            <li>＝ 簡易版三項，再加：</li>
+            <li><b>Git</b>（git-scm.com）— 版本控管基礎</li>
+            <li><b>GitHub Private Repo</b> — 雲端備份、一鍵還原</li>
+          </ul>
+        </div>
+      </div>
+      <div class="grid g2 mt2" style="align-items:center">
+        <div class="note">
+<span class="cmt"># 正式版才需要：在知識庫資料夾內一次性設定</span>
+git init
+git add .
+git commit -m <span class="link">"初始知識庫"</span>
+<span class="cmt"># 連到 GitHub 後：</span>
+git push
+<span class="cmt"># 之後每次整理完 → commit 一次，留一個版本</span>
+        </div>
+        <div class="card" style="border-color:rgba(95,224,192,.35)">
+          <h3><span class="ico">💊</span>正式版為什麼值得？</h3>
+          <p style="color:var(--ink)">Git／GitHub 是知識庫的<b>後悔藥</b>：AI 萬一改壞或刪錯，<b>隨時還原</b>到任一版本；GitHub 再多一層<b>異地雲端備份</b>，換電腦也不怕丟。</p>
+        </div>
+      </div>
+      <p class="footnote">＊建議從<b>簡易版</b>開始，體驗到價值後再升級正式版；不熟指令可請 Claude Code 代為設定。</p>
+    </div>
+  </section>
+
+  <!-- 20. 怎麼開始 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="kicker">裝好之後</div>
+      <h2>日常運作，就<span class="accent">三步驟</span></h2>
+      <div class="grid g3 mt2">
+        <div class="card"><div class="step-n">STEP 1</div><h3 class="mt">建兩個資料夾</h3><p>一個 <b>raw/</b> 放原始資料，一個 <b>wiki/</b> 放整理後的知識。</p></div>
+        <div class="card"><div class="step-n">STEP 2</div><h3 class="mt">丟一份資料進去</h3><p>選一份你最常翻的檔案，跟 AI 說「整理這份」。</p></div>
+        <div class="card"><div class="step-n">STEP 3</div><h3 class="mt">開始問問題</h3><p>用白話問你想知道的事，讓知識庫長起來。</p></div>
+      </div>
+      <div class="card mt2" style="border-color:rgba(95,224,192,.35)">
+        <h3><span class="ico">✨</span>而且你「不需要」這些</h3>
+        <p style="color:var(--ink)">❌ 不需要會寫程式（照步驟貼指令即可）　　❌ 不需要向量資料庫　　❌ 不需要昂貴系統</p>
+        <p class="footnote">約 100 份來源以內運作良好，全程純 markdown、可用 Git 追蹤。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 懶人包：把篩選交給 AI -->
+  <section class="slide">
+    <div class="inner">
+      <div class="kicker">懶人包</div>
+      <h2>面對多年舊資料？<span class="accent">把篩選交給 AI</span></h2>
+      <p class="lead mt">不必自己懂一堆準則——把下面這段貼給 Claude Code，<strong>填上資料夾路徑</strong>就好。它會先給清單、停下來等你確認，<strong class="accent2">全程不刪改原檔</strong>。</p>
+      <div class="note mt2" style="font-size:13px;line-height:1.6">
+你是我的「知識庫導入助理」。我要把一個累積多年的資料夾，篩選出第一波該放進 LLM-Wiki raw/ 的資料。
+<span class="cmt">【路徑】</span><span class="link">〈填資料夾路徑〉</span>　<span class="cmt">【我的領域】</span><span class="link">〈例如：營運/開發/財務〉</span>
+
+請這樣做：
+1. 先用目錄樹＋檔名＋日期快速盤點，不要逐份細讀，也不要搬動或修改任何檔案。
+2. 為每個檔案標「<span class="k">納入／暫緩／排除</span>」，準則：高頻或高痛、內容仍有效、別人接手會需要——<span class="k">滿足兩項以上才納入</span>。舊版本只留權威版；流水帳、可重新取得的公開資料、機敏不可上雲者先排除或暫緩。
+3. 輸出：①分類表(檔案/建議/一句理由/備註) ②從「納入」挑 10–30 份最高價值的「種子批」(寧少勿多) ③三個你需要我先回答的問題。
+
+先給清單並停下來，等我確認種子批再 ingest，全程不刪改原始檔。
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ 1：門檻與資安 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="kicker">常見問題 FAQ · 1／3</div>
+      <h2>門檻、資料安全</h2>
+      <div class="grid g2 mt2">
+        <div class="card">
+          <h3><span class="accent2" style="font-weight:800">Q.</span>我不會寫程式，也沒用過這些工具，能用嗎？要學多久？</h3>
+          <p><b class="accent2">A.</b> 核心只有兩個動作：<b>丟檔案、問問題</b>。工具點「下一步」就裝好；那幾行指令照貼即可，或直接請 Claude Code 代勞。大約<b>十分鐘</b>就能上手。</p>
+        </div>
+        <div class="card">
+          <h3><span class="accent2" style="font-weight:800">Q.</span>我的機密資料會外流、被拿去訓練 AI 嗎？放 GitHub 不就公開了？</h3>
+          <p><b class="accent2">A.</b> 資料存在<b>你自己的電腦</b>；要不要上雲由你決定，且 GitHub 請選 <b>Private 私有儲存庫</b>（不公開）。是否使用對話資料依方案與公司政策設定，最保險是<b>高敏感資料只留本機</b>。</p>
+        </div>
+        <div class="card">
+          <h3><span class="accent2" style="font-weight:800">Q.</span>限閱、個資類的東西可以放進去嗎？</h3>
+          <p><b class="accent2">A.</b> 依公司資安分級判斷。高敏感資料建議<b>只放本機、不上 GitHub、不接雲端</b>；接資料庫時用<b>唯讀連線</b>，AI 只能查不能改。</p>
+        </div>
+        <div class="card">
+          <h3><span class="accent2" style="font-weight:800">Q.</span>萬一 AI 把我的資料整理錯、或刪掉了怎麼辦？</h3>
+          <p><b class="accent2">A.</b> 這正是 Git／GitHub 的用途——<b>一鍵還原</b>到任何一個歷史版本。原始資料（raw/）也永遠保留不動，隨時可重來。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ 2：信任、成本、導入 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="kicker">常見問題 FAQ · 2／3</div>
+      <h2>信任、成本、怎麼導入</h2>
+      <div class="grid g2 mt2">
+        <div class="card">
+          <h3><span class="accent2" style="font-weight:800">Q.</span>AI 會不會亂編、講錯？我怎麼知道能不能相信？</h3>
+          <p><b class="accent2">A.</b> 每個答案都<b>帶出處</b>，會標明來自哪一頁、哪份原始資料，你可以點回去查證——不是憑空生成。</p>
+        </div>
+        <div class="card">
+          <h3><span class="accent2" style="font-weight:800">Q.</span>要花錢嗎？可以放多少資料？「1 份」是什麼？</h3>
+          <p><b class="accent2">A.</b> Claude Code 需<b>訂閱</b>，其餘工具免費。「1 份」＝一個<b>來源檔案</b>（一份 PDF／Excel／會議記錄，不論頁數）。約 <b>百來份</b>內用單純結構就運作良好；<b>更多也不會壞</b>，只要<b>分主題建子索引、或拆成多個知識庫</b>即可，依然不需要向量資料庫。</p>
+        </div>
+        <div class="card">
+          <h3><span class="accent2" style="font-weight:800">Q.</span>這要取代公司現有的共用磁碟 / Notion / SharePoint 嗎？</h3>
+          <p><b class="accent2">A.</b> 不取代，是<b>補充</b>。差別在於它會<b>主動讀懂、整理、交叉連結</b>，並用<b>帶出處</b>的方式回答你——不只是把檔案放著。</p>
+        </div>
+        <div class="card">
+          <h3><span class="accent2" style="font-weight:800">Q.</span>我這個職務怎麼用？回去第一步做什麼？團隊能共用嗎？</h3>
+          <p><b class="accent2">A.</b> 挑一份你<b>最常翻的檔案</b>丟進去、問一個問題，就開始了。團隊可共用<b>同一個私有儲存庫</b>協作維護。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ 3：技術延伸疑問 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="kicker">常見問題 FAQ · 3／3</div>
+      <h2>再深入一點的疑問</h2>
+      <div class="grid g2 mt2">
+        <div class="card">
+          <h3><span class="accent2" style="font-weight:800">Q.</span>為什麼不直接用 RAG／向量資料庫？那不是更強嗎？</h3>
+          <p><b class="accent2">A.</b> RAG 解決的是「<b>上千份的語意檢索</b>」；這套解決的是「<b>我的幾十份工作文件被讀懂、連結、持續更新</b>」——規模不同。它刻意走輕量：<b>零基礎設施、純文字、可 git 追蹤</b>。真有大規模即時檢索需求，再上 RAG 即可，兩者不衝突。</p>
+        </div>
+        <div class="card">
+          <h3><span class="accent2" style="font-weight:800">Q.</span>AI 整理錯的內容，會不會累積、污染整個知識庫？</h3>
+          <p><b class="accent2">A.</b> 機制上有三道防線：①答案<b>帶出處</b>，錯誤可即點即查、可定位；②<b>raw/ 永不修改</b>＋<b>git 版本控管</b>，可回溯、可還原；③<b>Lint 健檢</b>專抓矛盾與過時。定位是「<b>AI 草擬、人審核</b>」，不是不容質疑的真理。</p>
+        </div>
+        <div class="card">
+          <h3><span class="accent2" style="font-weight:800">Q.</span>會不會被綁死某個 AI／廠商？模型升級會讓結果不一致嗎？</h3>
+          <p><b class="accent2">A.</b> 不會綁死——產物是<b>純 markdown ＋ git</b>，換工具、換模型、換廠商都帶得走、讀得到。已寫成文字的頁面是<b>固定的</b>，模型升級只影響「下次怎麼整理」，不會回頭改寫舊頁。</p>
+        </div>
+        <div class="card">
+          <h3><span class="accent2" style="font-weight:800">Q.</span>我自己很熟我的檔案，維護這套划算嗎？</h3>
+          <p><b class="accent2">A.</b> 對個人當下，邊際效益也許不高；價值在三個未來才付代價的點：<b>交接</b>（你腦中的索引帶不走）、<b>規模成長後</b>、<b>跨人協作</b>。你的大腦是最好的索引——直到休假、離職或別人接手那天。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 結尾 -->
+  <section class="slide">
+    <div class="inner center">
+      <div class="kicker" style="justify-content:center">一起開始</div>
+      <h1>讓散落的資料<br>變成<span class="accent2">會替你思考的知識庫</span></h1>
+      <p class="lead mt2">你只要：<strong>丟資料</strong> ＋ <strong>問問題</strong>。<br>整理、連結、檢查，交給 AI。</p>
+      <div class="mt2">
+        <span class="chip">📥 Ingest</span>
+        <span class="chip">💬 Query</span>
+        <span class="chip">🩺 Lint</span>
+      </div>
+      <div class="card mt2" style="max-width:700px;margin-left:auto;margin-right:auto;border-color:rgba(95,224,192,.45)">
+        <h3 style="justify-content:center"><span class="ico">🚀</span>回去後，只要做一件事</h3>
+        <p style="color:var(--ink);line-height:1.9;margin-top:6px">挑一個你<b>最常被問、最常找不到資料</b>的主題，<br>準備 <b>5～10 份</b>相關文件，<br>我們一起建立你的<strong class="accent2">第一個 LLM-Wiki</strong>。</p>
+      </div>
+      <p class="footnote">謝謝聆聽　·　Q &amp; A　·　想試試的同仁，直接來找我</p>
+    </div>
+  </section>
+
+
+  <!-- ===== 附錄：深入版案例（移至結尾之後） ===== -->
+  <!-- 附錄分隔頁 -->
+  <section class="slide">
+    <div class="inner center">
+      <div class="kicker" style="justify-content:center">附錄 · Appendix</div>
+      <h1>附錄：<span class="accent">各職務深入案例</span></h1>
+      <p class="lead mt2">以下是 系統開發、Code 融入、內外包窗口、主管／PM 的<strong>深入版範例</strong>，<br>正式分享時可略過，供有興趣的同仁會後查閱。</p>
+      <p class="footnote">← 返回前面任一頁　·　這幾頁不影響主線</p>
+    </div>
+  </section>
+
+  <!-- Demo 3：系統開發技術人員（深入版，可略） -->
+  <section class="slide">
+    <div class="inner">
+      <span class="pill" style="opacity:.8">深入版 · 系統開發（可略）</span>
+      <h2 class="mt">系統開發人員：把<span class="accent">系統知識</span>從腦袋搬出來</h2>
+      <div class="grid g2 mt2" style="align-items:center">
+        <div>
+          <h3 style="margin-bottom:10px">丟進 raw/ 的東西</h3>
+          <p style="font-size:15px">規格文件、API 文件、資料庫 schema、架構決策、會議結論、過往 bug／事故記錄、第三方串接文件。</p>
+          <h3 style="margin:18px 0 10px">AI 整理成</h3>
+          <ul class="clean" style="margin-top:0">
+            <li><b>系統架構地圖</b>與模組關係（含 Mermaid 圖）</li>
+            <li><b>架構決策記錄（ADR）</b>：為什麼這樣設計</li>
+            <li><b>踩雷／事故筆記</b>：根因與修法</li>
+          </ul>
+        </div>
+        <div class="note">
+<span class="cmt"># 改功能前先評估影響</span>
+我要改登入流程，會牽動哪些服務？
+<span class="cmt"># AI：引用 [[架構-登入流程]]、[[服務-Auth]]，附流程圖</span>
+
+<span class="cmt"># 查歷史事故</span>
+上次 production 登入卡住的根因？怎麼修的？
+<span class="cmt"># AI：引用 [[事故-2025登入逾時]]，給根因＋修法</span>
+
+<span class="cmt"># 新人 onboarding</span>
+給我這個系統的架構總覽，從哪開始讀？
+        </div>
+      </div>
+      <p class="lead mt2 center">系統知識不再只在資深工程師腦袋裡——<strong class="accent2">交接、debug、影響評估都更快</strong>。</p>
+    </div>
+  </section>
+
+  <!-- Demo 3 延伸：Code 與知識庫雙向流動 -->
+  <section class="slide">
+    <div class="inner">
+      <span class="pill" style="opacity:.8">深入版 · Code（可略）</span>
+      <h2 class="mt">Code 的產出，怎麼<span class="accent">融入知識庫</span>？</h2>
+      <div class="card mt2" style="border-color:rgba(124,156,255,.4)">
+        <p style="color:var(--ink);font-size:clamp(15px,1.6vw,20px)"><b>核心心法：</b>程式碼本身<b>不進</b> wiki（它有自己的 git，是它自己的真相來源）；進 wiki 的是「<strong class="accent2">關於程式碼的 why 與全貌</strong>」——用<b>連結</b>指過去，不複製。</p>
+      </div>
+      <div class="flow mt2" style="font-size:14px">
+        <div class="node"><div class="ico">🧠</div><h3>知識庫 wiki</h3><p>架構、決策、踩雷</p></div>
+        <div class="arrow" style="flex-direction:column;font-size:13px;color:var(--accent2)">先備知識<br>→</div>
+        <div class="node"><div class="ico">⌨️</div><h3>產出 code</h3><p>符合既有架構與慣例</p></div>
+        <div class="arrow" style="flex-direction:column;font-size:13px;color:var(--accent2)">回填 why<br>→</div>
+        <div class="node" style="border-color:rgba(95,224,192,.4)"><div class="ico">🔄</div><h3>更新知識庫</h3><p>新模組／決策／協定</p></div>
+      </div>
+      <div class="grid g2 mt2">
+        <div class="card">
+          <h3><span class="ico">📥</span>哪些該進 wiki</h3>
+          <p style="font-size:14px">架構圖、<b>架構決策（ADR）</b>、事故/踩雷筆記、API 協定、領域詞彙、onboarding 地圖——<b>用模組／決策為單位，不是每個檔案一頁</b>。</p>
+        </div>
+        <div class="card">
+          <h3><span class="ico">🔗</span>怎麼接、怎麼保鮮</h3>
+          <p style="font-size:14px">引用程式碼用 <b>路徑:行號 / PR 連結</b>不複製；改 code 與更新 wiki 放<b>同一個 PR</b>；Lint 升級成<b>對照現況</b>抓過時頁。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo 4：內外包窗口 -->
+  <section class="slide">
+    <div class="inner">
+      <span class="pill" style="opacity:.8">深入版 · 內外包窗口（可略）</span>
+      <h2 class="mt">內外包窗口：建立<span class="accent">同一個事實來源</span></h2>
+      <div class="grid g2 mt2" style="align-items:center">
+        <div>
+          <h3 style="margin-bottom:10px">痛點</h3>
+          <p style="font-size:15px">需求散在 Email、訊息、會議；廠商常問「這之前怎麼講的？」；版本、決議、驗收標準各說各話。</p>
+          <h3 style="margin:18px 0 10px">AI 整理成</h3>
+          <ul class="clean" style="margin-top:0">
+            <li>每個外包專案<b>一頁</b>：現況、決議、待辦、窗口</li>
+            <li><b>需求變更歷史</b>：誰、何時、改了什麼</li>
+            <li><b>驗收清單</b>：標準與達成進度</li>
+          </ul>
+        </div>
+        <div class="note">
+<span class="cmt"># 對齊交付</span>
+上週跟廠商 A 確認的交付項目與時程？
+<span class="cmt"># AI：引用 [[外包-A專案]]，列項目＋日期＋出處</span>
+
+<span class="cmt"># 防止各說各話</span>
+這個需求變更前後差在哪？誰拍板的？
+<span class="cmt"># AI：引用 [[需求變更-0612]]，標記決策人與時間</span>
+
+<span class="cmt"># 把雜訊變規格</span>
+把這串 email 整理成給外包的需求規格
+產出本週對廠商的進度追蹤清單
+        </div>
+      </div>
+      <p class="lead mt2 center">對內對外都看<strong>同一份事實</strong>——<strong class="accent2">少了推諉，責任清楚，交接不漏</strong>。</p>
+    </div>
+  </section>
+
+  <!-- Demo 5：主管／PM -->
+  <section class="slide">
+    <div class="inner">
+      <span class="pill" style="opacity:.8">深入版 · 主管／PM（可略）</span>
+      <h2 class="mt">主管／PM：把<span class="accent">跨專案現況</span>一手掌握</h2>
+      <div class="grid g2 mt2" style="align-items:center">
+        <div>
+          <h3 style="margin-bottom:10px">丟進 raw/ 的東西</h3>
+          <p style="font-size:15px">各專案週報、會議記錄、KPI 數據、風險議題、人力與時程狀況。</p>
+          <h3 style="margin:18px 0 10px">AI 整理成</h3>
+          <ul class="clean" style="margin-top:0">
+            <li><b>跨專案進度儀表</b>：誰在做什麼、到哪了</li>
+            <li><b>風險清單</b>：議題、負責人、狀態</li>
+            <li><b>決策／待辦追蹤</b>：哪些逾期</li>
+          </ul>
+        </div>
+        <div class="note">
+<span class="cmt"># 掌握全局</span>
+這週各專案進度如何？有哪些紅燈項目？
+<span class="cmt"># AI：彙整各週報，列進度＋亮紅燈項目＋出處</span>
+
+<span class="cmt"># 盯風險與待辦</span>
+還沒解決的風險有哪些？負責人是誰？
+上次決議的待辦，哪些逾期了？
+
+<span class="cmt"># 秒出週報</span>
+把這週彙整成給老闆的一頁重點週報
+        </div>
+      </div>
+      <p class="lead mt2 center">從「<span class="vs-old">追著各團隊要狀態</span>」變成「<strong class="accent2">直接問知識庫</strong>」——週報秒出、風險不漏接。</p>
+    </div>
+  </section>
+
+</div>
+
+<div class="nav">
+  <div class="half" id="prevHalf"></div>
+  <div class="half" id="nextHalf"></div>
+</div>
+<div class="hint" id="hint">← → 翻頁 · F 全螢幕</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var cur = 0;
+  var total = slides.length;
+  document.getElementById('tot').textContent = total;
+
+  function render(){
+    slides.forEach(function(s,i){ s.classList.toggle('active', i===cur); });
+    document.getElementById('cur').textContent = cur+1;
+    document.getElementById('progress').style.width = ((cur+1)/total*100)+'%';
+  }
+  function go(n){ cur = Math.max(0, Math.min(total-1, n)); render(); }
+  function next(){ go(cur+1); }
+  function prev(){ go(cur-1); }
+
+  document.addEventListener('keydown', function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){ e.preventDefault(); next(); }
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key==='Home'){ go(0); }
+    else if(e.key==='End'){ go(total-1); }
+    else if(e.key==='f'||e.key==='F'){
+      if(!document.fullscreenElement){ document.documentElement.requestFullscreen(); }
+      else{ document.exitFullscreen(); }
+    }
+  });
+  document.getElementById('nextHalf').addEventListener('click', next);
+  document.getElementById('prevHalf').addEventListener('click', prev);
+
+  // hide hint after a few seconds
+  setTimeout(function(){ var h=document.getElementById('hint'); if(h) h.style.opacity='0'; }, 4500);
+
+  render();
+})();
+</script>
+</body>
+</html>
