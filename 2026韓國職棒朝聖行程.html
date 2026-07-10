@@ -283,6 +283,17 @@
   .shop b { color: var(--green); }
   .shop .shop-note { display: block; margin-top: 6px; font-size: 12px; color: var(--muted); }
 
+  /* ── WEATHER ── */
+  table.wx { width:100%; border-collapse:collapse; font-size:14px; }
+  table.wx th, table.wx td { padding:11px 12px; text-align:left; border-bottom:1px solid var(--border); }
+  table.wx th { color:var(--sky); font-size:13px; }
+  table.wx tr:last-child td { border-bottom:none; }
+  table.wx td.temp { color:var(--gold); font-weight:700; white-space:nowrap; }
+  table.wx td.day { white-space:nowrap; font-weight:700; }
+  .wx-high { color:var(--orange); font-weight:700; }
+  .wx-low { color:var(--green); font-weight:700; }
+  .wx-dome { color:var(--muted); }
+
   /* ── FOOTER ── */
   footer {
     text-align: center; margin-top: 40px;
@@ -343,6 +354,34 @@
   <div class="notice">
     ⚠️ <b>梅雨季提醒</b>：7 月為韓國梅雨季末尾，建議每天出門前查看天氣預報。行程中標有 <span style="color:var(--sky)">🌧️ 藍點</span> 的時段附有室內備案。
   </div>
+
+  <!-- 天氣預報 -->
+  <section class="block">
+    <div class="section-heading">🌤️ 逐日天氣預報</div>
+    <div class="notice" style="background:rgba(58,160,216,.1);border-color:rgba(58,160,216,.4);border-left-color:var(--sky)">
+      🗓️ <b>出發前 8 天預報（查詢日 2026-07-10）</b>。8 天外預報變動大，<b>出發前 2–3 天（約 7/16）建議再查一次</b>。兩場<b>露天</b>球賽（7/18 蠶室、7/22 社稷）已標降雨風險；7/21 高尺巨蛋為<b>室內</b>，不受天候影響。
+    </div>
+    <div class="card" style="overflow-x:auto">
+      <table class="wx">
+        <thead><tr><th>日期</th><th>城市</th><th>高／低溫</th><th>概況</th><th>降雨風險</th></tr></thead>
+        <tbody>
+          <tr><td class="day">7/18 六</td><td>首爾</td><td class="temp">32° / 25°</td><td>多雲，有短暫陣雨</td><td class="wx-high">⚠️ 偏高 · 蠶室露天</td></tr>
+          <tr><td class="day">7/19 日</td><td>首爾</td><td class="temp">34° / 25°</td><td>局部短暫雨轉晴，悶熱</td><td>中低</td></tr>
+          <tr><td class="day">7/20 一</td><td>首爾</td><td class="temp">35° / 27°</td><td>多雲到晴，炎熱</td><td class="wx-low">低</td></tr>
+          <tr><td class="day">7/21 二</td><td>首爾</td><td class="temp">35° / 27°</td><td>晴，炎熱</td><td class="wx-dome">— 高尺室內</td></tr>
+          <tr><td class="day">7/22 三</td><td>釜山</td><td class="temp">31° / 26°</td><td>晴到多雲</td><td class="wx-low">✅ 低 · 社稷露天</td></tr>
+          <tr><td class="day">7/23 四</td><td>釜山</td><td class="temp">29° / 25°</td><td>晴</td><td class="wx-low">低</td></tr>
+          <tr><td class="day">7/24 五</td><td>釜山</td><td class="temp">29° / 24°</td><td>晴</td><td class="wx-low">低</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="notice" style="margin-top:16px">
+      ⚾ <b>兩場露天球賽降雨風險</b><br>
+      • <b>7/18 蠶室（首爾）</b>：<span class="wx-high">降雨風險偏高</span>——多個預報來源顯示當天有陣雨／短暫雨。<b>務必帶輕便雨衣</b>（KBO 球場多禁傘），並留意主辦 Garlic Bros 賽前是否通知<b>改高尺巨蛋或取消</b>；免費取消期限 7/17 00:00 KST。<br>
+      • <b>7/22 社稷（釜山）</b>：<span class="wx-low">目前降雨風險低</span>（晴到多雲），仍建議帶輕便雨衣備用；遇大雨可能延賽。<br>
+      • <b>7/21 高尺巨蛋</b>：全室內恆溫，<b>不受天候影響</b>。
+    </div>
+  </section>
 
   <!-- 住宿 -->
   <section class="block">
@@ -438,6 +477,7 @@
           <div class="game-line">⚾ LG 雙子（主）vs KT 巫師（客）｜18:00 開打｜✅ Klook 套裝已確認（訂單 AEJ429161）</div>
           <div style="margin-top:6px"><b>球賽＋韓食體驗套裝（主辦 Garlic Bros）</b>：賽前一起吃 <b>韓式烤肉／炸雞</b>（約 1.5h）→ 進場看球（約 3h，含一杯手工啤酒），全程英／韓語導遊，可中途離開。</div>
           <div class="rain-plan" style="background:rgba(232,98,26,.1);color:var(--orange)">⚠️ <b>集合出口看賽前 1 天 email 通知（1／7／8 號其一），請勿照 Klook 憑證！</b> 套裝不保證特定座位（門票賽前 7 天才開，主辦會再通知）。</div>
+          <div class="rain-plan" style="background:rgba(232,98,26,.1);color:var(--orange)">🌦️ <b>天氣（7/10 預報）</b>：7/18 首爾 高約 32°／低 25°，多雲有短暫陣雨，<b>降雨風險偏高</b>。露天球場，<b>務必帶輕便雨衣（球場多禁傘）</b>。出發前 2–3 天再確認。</div>
           <div class="rain-plan">🌧️ 露天球場，遇大雨主辦可能改高尺巨蛋或取消（會提前通知）。免費取消期限 7/17 00:00（韓國時間）。</div>
 
           <div class="watch">
@@ -548,6 +588,7 @@
           17:00 <b>社稷球場</b>（綜合運動場站 <span class="kr">종합운동장 307</span> 或 社稷站 사직 308），人稱「全世界最大 KTV」。建議龍頭山搭計程車直達（約 ₩8,000）。
           <div class="game-line">⚾ 樂天巨人（主）vs SSG 登陸者（客）（18:30 開打）</div>
           <div style="margin-top:6px">入境隨俗揮紅毛巾、跟著全場合唱〈釜山海鷗〉一起應援！（招牌橘色塑膠袋 봉다리 已因環保停用，改紅毛巾）</div>
+          <div class="rain-plan" style="background:rgba(39,174,96,.1);color:var(--green)">🌦️ <b>天氣（7/10 預報）</b>：7/22 釜山 高約 31°／低 26°，晴到多雲，<b>目前降雨風險低</b>。露天球場仍建議帶輕便雨衣備用。出發前 2–3 天再確認。</div>
           <div class="rain-plan">🌧️ 露天球場，遇大雨可能延賽。備案：西面商圈晚餐 + 樂天百貨。</div>
 
           <div class="watch">
