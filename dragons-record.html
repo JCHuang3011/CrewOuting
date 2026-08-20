@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>味全龍親臨戰績簿</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+:root{
+  --red:#C8102E;
+  --red-soft:#F6E3E6;
+  --ink:#201D1B;
+  --ink-2:#5C5650;
+  --ground:#FBFAF7;
+  --card:#FFFFFF;
+  --line:#E8E3DC;
+  --loss:#6B7280;
+  --loss-soft:#EEF0F3;
+  --gold:#B8860B;
+  --thead:#F4F0EA;
+}
+:root:not([data-theme="light"]){}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --red:#E8455F;
+    --red-soft:#3A1B22;
+    --ink:#EDE9E3;
+    --ink-2:#A8A19A;
+    --ground:#171412;
+    --card:#211D1A;
+    --line:#38322C;
+    --loss:#9CA3AF;
+    --loss-soft:#2A2E35;
+    --gold:#D4A62A;
+    --thead:#2A2521;
+  }
+}
+:root[data-theme="dark"]{
+  --red:#E8455F;
+  --red-soft:#3A1B22;
+  --ink:#EDE9E3;
+  --ink-2:#A8A19A;
+  --ground:#171412;
+  --card:#211D1A;
+  --line:#38322C;
+  --loss:#9CA3AF;
+  --loss-soft:#2A2E35;
+  --gold:#D4A62A;
+  --thead:#2A2521;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"Noto Sans TC",-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
+  line-height:1.6;
+}
+.wrap{max-width:860px;margin:0 auto;padding:40px 20px 64px}
+header{border-bottom:3px solid var(--red);padding-bottom:24px;margin-bottom:28px}
+.eyebrow{
+  font-size:.78rem;letter-spacing:.18em;color:var(--red);
+  font-weight:700;text-transform:uppercase;margin:0 0 6px;
+}
+h1{
+  font-family:"Noto Serif TC",serif;font-weight:900;
+  font-size:clamp(1.7rem,5vw,2.5rem);margin:0 0 4px;text-wrap:balance;
+}
+.sub{color:var(--ink-2);margin:0;font-size:.95rem}
+.hero{
+  display:flex;flex-wrap:wrap;gap:14px;align-items:stretch;margin-bottom:32px;
+}
+.big{
+  flex:1 1 260px;background:var(--red);color:#fff;border-radius:10px;
+  padding:22px 26px;display:flex;flex-direction:column;justify-content:center;
+}
+.big .num{
+  font-family:"Noto Serif TC",serif;font-weight:900;
+  font-size:clamp(2.2rem,7vw,3.2rem);line-height:1.1;
+  font-variant-numeric:tabular-nums;
+}
+.big .lbl{opacity:.9;font-size:.88rem;margin-top:4px}
+.years{flex:2 1 380px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.ycard{
+  background:var(--card);border:1px solid var(--line);border-radius:10px;
+  padding:14px 16px;display:flex;flex-direction:column;gap:2px;
+}
+.ycard .y{font-size:.8rem;letter-spacing:.08em;color:var(--ink-2);font-weight:700}
+.ycard .wl{
+  font-family:"Noto Serif TC",serif;font-weight:700;font-size:1.35rem;
+  font-variant-numeric:tabular-nums;
+}
+.ycard .pct{font-size:.82rem;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.ycard.best{border-color:var(--gold)}
+.ycard.best .pct::after{content:" 🔥"}
+section h2{
+  font-family:"Noto Serif TC",serif;font-weight:700;font-size:1.25rem;
+  margin:36px 0 10px;display:flex;align-items:baseline;gap:10px;
+}
+section h2 .cnt{font-size:.82rem;color:var(--ink-2);font-weight:400}
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.9rem}
+th{
+  text-align:left;font-size:.75rem;letter-spacing:.1em;color:var(--ink-2);
+  background:var(--thead);padding:9px 12px;font-weight:700;white-space:nowrap;
+}
+td{
+  padding:9px 12px;border-top:1px solid var(--line);white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+td.score{font-weight:700}
+td.note{color:var(--ink-2);font-size:.82rem;white-space:normal;min-width:120px}
+.pill{
+  display:inline-block;padding:1px 10px;border-radius:999px;
+  font-size:.8rem;font-weight:700;letter-spacing:.05em;
+}
+.pill.w{background:var(--red-soft);color:var(--red)}
+.pill.l{background:var(--loss-soft);color:var(--loss)}
+.wq{color:var(--red);font-weight:700}
+.pill.n{background:var(--loss-soft);color:var(--ink-2);font-weight:500}
+tr.streak td:first-child{box-shadow:inset 3px 0 0 var(--gold)}
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin:12px 2px 0;font-size:.82rem;color:var(--ink-2)}
+.legend .sw{display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--gold);margin-right:6px;vertical-align:baseline}
+footer{
+  margin-top:40px;border-top:1px solid var(--line);padding-top:16px;
+  font-size:.82rem;color:var(--ink-2);
+}
+footer p{margin:4px 0}
+@media (max-width:620px){.years{grid-template-columns:1fr 1fr 1fr;gap:8px}.ycard{padding:10px 10px}.ycard .wl{font-size:1.1rem}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <p class="eyebrow">CPBL 職棒 35–37 年 · 2024–2026</p>
+  <h1>味全龍親臨戰績簿</h1>
+  <p class="sub">我們一家進場的每一場比賽——42 場逐場比分，全數核對 CPBL 官方紀錄</p>
+</header>
+
+<div class="hero">
+  <div class="big">
+    <div class="num">25 勝 15 敗</div>
+    <div class="lbl">入場 40 場例行賽 · 勝率 .625 · 我們是福星 ⚾</div>
+  </div>
+  <div class="years">
+    <div class="ycard"><span class="y">2024</span><span class="wl">5–3</span><span class="pct">.625 · 8 場</span></div>
+    <div class="ycard"><span class="y">2025</span><span class="wl">9–8</span><span class="pct">.529 · 17 場</span></div>
+    <div class="ycard best"><span class="y">2026 至 8/16</span><span class="wl">11–4</span><span class="pct">.733</span></div>
+  </div>
+</div>
+
+<section>
+<h2>2024（職棒 35 年）<span class="cnt">9 場 · 味全 5 勝 3 敗</span></h2>
+<div class="tblwrap"><table>
+<thead><tr><th>日期</th><th>對戰（客 vs 主）</th><th>場地</th><th>比分</th><th>味全</th><th>備註</th></tr></thead>
+<tbody>
+<tr><td>03/31</td><td>中信兄弟 vs 味全龍</td><td>大巨蛋</td><td class="score">3:<span class="wq">2</span></td><td><span class="pill l">敗</span></td><td class="note"></td></tr>
+<tr><td>06/01</td><td>中信兄弟 vs 味全龍</td><td>大巨蛋</td><td class="score">7:<span class="wq">3</span></td><td><span class="pill l">敗</span></td><td class="note"></td></tr>
+<tr><td>06/02</td><td>中信兄弟 vs 味全龍</td><td>大巨蛋</td><td class="score">2:<span class="wq">6</span></td><td><span class="pill w">勝</span></td><td class="note"></td></tr>
+<tr><td>07/06</td><td>台鋼雄鷹 vs 味全龍</td><td>天母</td><td class="score">4:<span class="wq">11</span></td><td><span class="pill w">勝</span></td><td class="note"></td></tr>
+<tr><td>07/27</td><td>台鋼雄鷹 vs 富邦悍將</td><td>大巨蛋</td><td class="score">3:4</td><td><span class="pill n">—</span></td><td class="note">無味全，不計戰績</td></tr>
+<tr><td>08/31</td><td>統一獅 vs 味全龍</td><td>天母</td><td class="score">2:<span class="wq">3</span></td><td><span class="pill w">勝</span></td><td class="note"></td></tr>
+<tr><td>09/14</td><td>中信兄弟 vs 味全龍</td><td>大巨蛋</td><td class="score">3:<span class="wq">2</span></td><td><span class="pill l">敗</span></td><td class="note"></td></tr>
+<tr><td>09/15</td><td>中信兄弟 vs 味全龍</td><td>大巨蛋</td><td class="score">0:<span class="wq">3</span></td><td><span class="pill w">勝</span></td><td class="note"></td></tr>
+<tr><td>10/06</td><td>富邦悍將 vs 味全龍</td><td>天母</td><td class="score">3:<span class="wq">5</span></td><td><span class="pill w">勝</span></td><td class="note">官方補賽（場次 266）</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<h2>2025（職棒 36 年）<span class="cnt">18 場 · 味全 9 勝 8 敗（另熱身賽 1 場不計）</span></h2>
+<div class="tblwrap"><table>
+<thead><tr><th>日期</th><th>對戰（客 vs 主）</th><th>場地</th><th>比分</th><th>味全</th><th>備註</th></tr></thead>
+<tbody>
+<tr><td>03/09</td><td>味全龍 vs 富邦悍將</td><td>新莊</td><td class="score"><span class="wq">2</span>:3</td><td><span class="pill n">敗＊</span></td><td class="note">熱身賽，不計戰績</td></tr>
+<tr><td>04/05</td><td>富邦悍將 vs 味全龍</td><td>天母</td><td class="score">3:<span class="wq">11</span></td><td><span class="pill w">勝</span></td><td class="note"></td></tr>
+<tr><td>05/17</td><td>味全龍 vs 富邦悍將</td><td>新莊</td><td class="score"><span class="wq">0</span>:2</td><td><span class="pill l">敗</span></td><td class="note">客場遠征</td></tr>
+<tr><td>05/24</td><td>台鋼雄鷹 vs 味全龍</td><td>大巨蛋</td><td class="score">0:<span class="wq">7</span></td><td><span class="pill w">勝</span></td><td class="note"></td></tr>
+<tr><td>05/25</td><td>台鋼雄鷹 vs 味全龍</td><td>大巨蛋</td><td class="score">6:<span class="wq">2</span></td><td><span class="pill l">敗</span></td><td class="note"></td></tr>
+<tr><td>06/08</td><td>統一獅 vs 味全龍</td><td>天母</td><td class="score">6:<span class="wq">4</span></td><td><span class="pill l">敗</span></td><td class="note"></td></tr>
+<tr><td>06/12</td><td>味全龍 vs 富邦悍將</td><td>大巨蛋</td><td class="score"><span class="wq">1</span>:2</td><td><span class="pill l">敗</span></td><td class="note">客場遠征</td></tr>
+<tr><td>06/22</td><td>統一獅 vs 味全龍</td><td>天母</td><td class="score">1:<span class="wq">4</span></td><td><span class="pill w">勝</span></td><td class="note"></td></tr>
+<tr><td>06/29</td><td>味全龍 vs 富邦悍將</td><td>新莊</td><td class="score"><span class="wq">1</span>:5</td><td><span class="pill l">敗</span></td><td class="note">客場遠征 · 補賽（場次 107）</td></tr>
+<tr><td>07/05</td><td>統一獅 vs 味全龍</td><td>天母</td><td class="score">4:<span class="wq">2</span></td><td><span class="pill l">敗</span></td><td class="note"></td></tr>
+<tr><td>07/06</td><td>統一獅 vs 味全龍</td><td>天母</td><td class="score">12:<span class="wq">16</span></td><td><span class="pill w">勝</span></td><td class="note">28 分打擊大戰</td></tr>
+<tr><td>07/27</td><td>富邦悍將 vs 味全龍</td><td>天母</td><td class="score">1:<span class="wq">5</span></td><td><span class="pill w">勝</span></td><td class="note"></td></tr>
+<tr><td>08/05</td><td>中信兄弟 vs 味全龍</td><td>大巨蛋</td><td class="score">3:<span class="wq">4</span></td><td><span class="pill w">勝</span></td><td class="note"></td></tr>
+<tr><td>08/16</td><td>樂天桃猿 vs 味全龍</td><td>天母</td><td class="score">2:<span class="wq">3</span></td><td><span class="pill w">勝</span></td><td class="note"></td></tr>
+<tr><td>09/06</td><td>台鋼雄鷹 vs 味全龍</td><td>大巨蛋</td><td class="score">3:<span class="wq">1</span></td><td><span class="pill l">敗</span></td><td class="note"></td></tr>
+<tr><td>09/07</td><td>台鋼雄鷹 vs 味全龍</td><td>大巨蛋</td><td class="score">1:<span class="wq">11</span></td><td><span class="pill w">勝</span></td><td class="note"></td></tr>
+<tr><td>09/27</td><td>富邦悍將 vs 味全龍</td><td>天母</td><td class="score">0:<span class="wq">9</span></td><td><span class="pill w">勝</span></td><td class="note"></td></tr>
+<tr><td>09/28</td><td>富邦悍將 vs 味全龍</td><td>天母</td><td class="score">3:<span class="wq">1</span></td><td><span class="pill l">敗</span></td><td class="note"></td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<h2>2026（職棒 37 年，至 8/16）<span class="cnt">15 場 · 味全 11 勝 4 敗</span></h2>
+<div class="tblwrap"><table>
+<thead><tr><th>日期</th><th>對戰（客 vs 主）</th><th>場地</th><th>比分</th><th>味全</th><th>備註</th></tr></thead>
+<tbody>
+<tr><td>04/03</td><td>台鋼雄鷹 vs 味全龍</td><td>天母</td><td class="score">4:<span class="wq">5</span></td><td><span class="pill w">勝</span></td><td class="note"></td></tr>
+<tr><td>04/05</td><td>台鋼雄鷹 vs 味全龍</td><td>天母</td><td class="score">1:<span class="wq">2</span></td><td><span class="pill w">勝</span></td><td class="note"></td></tr>
+<tr><td>04/06</td><td>樂天桃猿 vs 味全龍</td><td>天母</td><td class="score">1:<span class="wq">0</span></td><td><span class="pill l">敗</span></td><td class="note"></td></tr>
+<tr><td>04/17</td><td>中信兄弟 vs 味全龍</td><td>天母</td><td class="score">5:<span class="wq">3</span></td><td><span class="pill l">敗</span></td><td class="note"></td></tr>
+<tr class="streak"><td>04/18</td><td>中信兄弟 vs 味全龍</td><td>天母</td><td class="score">1:<span class="wq">8</span></td><td><span class="pill w">勝</span></td><td class="note">8 連勝開始</td></tr>
+<tr class="streak"><td>05/01</td><td>富邦悍將 vs 味全龍</td><td>天母</td><td class="score">1:<span class="wq">3</span></td><td><span class="pill w">勝</span></td><td class="note"></td></tr>
+<tr class="streak"><td>05/05</td><td>中信兄弟 vs 味全龍</td><td>大巨蛋</td><td class="score">3:<span class="wq">5</span></td><td><span class="pill w">勝</span></td><td class="note"></td></tr>
+<tr class="streak"><td>05/09</td><td>味全龍 vs 富邦悍將</td><td>新莊</td><td class="score"><span class="wq">8</span>:2</td><td><span class="pill w">勝</span></td><td class="note">客場遠征</td></tr>
+<tr class="streak"><td>05/16</td><td>樂天桃猿 vs 味全龍</td><td>天母</td><td class="score">1:<span class="wq">3</span></td><td><span class="pill w">勝</span></td><td class="note">龍焰燒烤席 🍖</td></tr>
+<tr class="streak"><td>05/23</td><td>味全龍 vs 中信兄弟</td><td>大巨蛋</td><td class="score"><span class="wq">2</span>:0</td><td><span class="pill w">勝</span></td><td class="note">客場遠征</td></tr>
+<tr class="streak"><td>05/26</td><td>富邦悍將 vs 味全龍</td><td>大巨蛋</td><td class="score">3:<span class="wq">4</span></td><td><span class="pill w">勝</span></td><td class="note">8 連勝達成 🏆</td></tr>
+<tr><td>07/31</td><td>中信兄弟 vs 味全龍</td><td>大巨蛋</td><td class="score">2:<span class="wq">4</span></td><td><span class="pill w">勝</span></td><td class="note"></td></tr>
+<tr><td>08/01</td><td>中信兄弟 vs 味全龍</td><td>大巨蛋</td><td class="score">1:<span class="wq">4</span></td><td><span class="pill w">勝</span></td><td class="note"></td></tr>
+<tr><td>08/02</td><td>中信兄弟 vs 味全龍</td><td>大巨蛋</td><td class="score">7:<span class="wq">0</span></td><td><span class="pill l">敗</span></td><td class="note"></td></tr>
+<tr><td>08/16</td><td>樂天桃猿 vs 味全龍</td><td>大巨蛋</td><td class="score">5:<span class="wq">1</span></td><td><span class="pill l">敗</span></td><td class="note"></td></tr>
+</tbody></table></div>
+<p class="legend"><span><span class="sw"></span>金邊列＝親臨 8 連勝（2026/4/18–5/26，含客場兩勝）</span></p>
+</section>
+
+<footer>
+  <p>比分為「客隊:主隊」，逐場查證自 CPBL 官網賽程資料庫（cpbl.com.tw）；熱身賽比分來源 ETtoday。</p>
+  <p>42 場中 41 場有味全龍出賽，唯一例外為 2024/7/27 台鋼 vs 富邦。統計截至 2026/8/16。</p>
+</footer>
+</div>
+
+</body>
+</html>
