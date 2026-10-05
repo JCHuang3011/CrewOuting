@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>芝加哥行李清單</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#1a1e26; --card2:#20252f;
+    --text:#e8eaf0; --muted:#9aa3b2;
+    --accent:#4fc3f7; --green:#66bb6a; --amber:#ffb74d; --red:#ef5350;
+    --border:#2c333f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,"PingFang TC","Noto Sans TC",sans-serif;line-height:1.6;padding:16px;max-width:640px;margin:0 auto}
+  h1{font-size:1.35rem;margin-bottom:4px}
+  .sub{color:var(--muted);font-size:.85rem;margin-bottom:12px}
+  .nav{display:flex;gap:8px;margin-bottom:14px}
+  .nav a{flex:1;text-align:center;padding:8px;border-radius:10px;background:var(--card2);color:var(--muted);text-decoration:none;font-size:.9rem;border:1px solid var(--border)}
+  .nav a.on{background:#0d2c3d;color:var(--accent);border-color:var(--accent)}
+  .progress{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 16px;margin-bottom:12px;position:sticky;top:8px;z-index:2}
+  .bar{height:8px;background:var(--card2);border-radius:4px;overflow:hidden;margin-top:6px}
+  .bar i{display:block;height:100%;background:var(--green);width:0;transition:width .2s}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 16px;margin-bottom:12px}
+  .card.key{border-color:var(--amber)}
+  .card h2{font-size:1.02rem;margin-bottom:6px;display:flex;justify-content:space-between;align-items:baseline}
+  .card h2 .cnt{font-size:.78rem;color:var(--muted);font-weight:400}
+  .card h3{font-size:.85rem;color:var(--muted);margin:8px 0 2px}
+  label{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--border);cursor:pointer;font-size:.93rem}
+  label:last-child{border-bottom:none}
+  input[type=checkbox]{width:22px;height:22px;flex:none;margin-top:1px;accent-color:var(--green)}
+  label.done span{color:var(--muted);text-decoration:line-through}
+  .note{display:block;color:var(--muted);font-size:.8rem;text-decoration:none}
+  b.warn{color:var(--amber)}
+  .btn{display:block;width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--card2);color:var(--muted);font-size:.9rem;margin-top:4px}
+  .foot{color:var(--muted);font-size:.75rem;text-align:center;margin:18px 0 8px}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <a href="weekly-training.html">🏃 本週功課</a>
+  <a class="on" href="chicago-packing.html">🎒 行李清單</a>
+</div>
+
+<h1>🎒 芝加哥行李清單</h1>
+<div class="sub">10/8（四）17:00 桃園 T2 團體櫃台集合 → BR56 20:00｜點一下打勾，勾選會存在這支手機上</div>
+
+<div class="progress"><span id="ptxt">已完成 0 / 0</span><div class="bar"><i id="pbar"></i></div></div>
+
+<div class="card key" data-sec="doc">
+  <h2>🛂 證件與行程 <span class="cnt"></span></h2>
+  <label><input type="checkbox" data-id="passport"><span>護照<span class="note">效期要超過回國日 6 個月</span></span></label>
+  <label><input type="checkbox" data-id="esta" data-default="1"><span>ESTA ✅ 已核准（有效至 2028-09-10）<span class="note">核准頁 PDF 存一份在手機</span></span></label>
+  <label><input type="checkbox" data-id="itin"><span>機票、行程表、飯店資料（Aloft Chicago Mag Mile）</span></label>
+  <label><input type="checkbox" data-id="race-confirm"><span>馬拉松報到確認信／QR Code＋護照影本<span class="note">EXPO 領號碼布用</span></span></label>
+  <label><input type="checkbox" data-id="money"><span>信用卡、少量美金、旅平險資料</span></label>
+</div>
+
+<div class="card key" data-sec="carry">
+  <h2>🎒 隨身行李（丟了就麻煩的） <span class="cnt"></span></h2>
+  <h3>跑步裝備</h3>
+  <label><input type="checkbox" data-id="pro3"><span><b class="warn">Pro 3 賽鞋</b>（不託運）</span></label>
+  <label><input type="checkbox" data-id="racekit"><span>比賽跑衣、跑褲、跑襪（多一雙襪子）</span></label>
+  <label><input type="checkbox" data-id="tape"><span>肌貼 2 套<span class="note">剪刀放託運</span></span></label>
+  <label><input type="checkbox" data-id="hrm"><span>心跳帶（<b class="warn">先換新電池</b>）</span></label>
+  <label><input type="checkbox" data-id="watch"><span>手錶＋充電線</span></label>
+  <label><input type="checkbox" data-id="caffeine"><span>賽日咖啡因 2 份<span class="note">賽前 60 分 1 份、2:30–3:00 再 1 份</span></span></label>
+  <h3>藥品（一定隨身）</h3>
+  <label><input type="checkbox" data-id="gout-meds"><span><b class="warn">降尿酸藥 ≥10 天份</b>（Benzbromarone＋秋水仙素，原包裝）<span class="note">慢箋最晚 10/7 領</span></span></label>
+  <label><input type="checkbox" data-id="paracetamol"><span>普拿疼（<b class="warn">不能帶 ibuprofen</b>）</span></label>
+  <label><input type="checkbox" data-id="vitd"><span>維生素 D3</span></label>
+  <label><input type="checkbox" data-id="skin"><span>皮膚科藥：頭皮藥水、臉部藥膏<span class="note">超過 100 ml 改託運</span></span></label>
+  <label><input type="checkbox" data-id="allergy-shot"><span>手機存「過敏與用藥禁忌」截圖<span class="note">ibuprofen 過敏、長期用藥</span></span></label>
+  <h3>機上</h3>
+  <label><input type="checkbox" data-id="bottle"><span>空水瓶（過安檢後裝水）</span></label>
+  <label><input type="checkbox" data-id="sleep-kit"><span>眼罩、耳塞</span></label>
+  <label><input type="checkbox" data-id="jacket"><span>機上外套</span></label>
+  <label><input type="checkbox" data-id="powerbank"><span>手機、充電器、<b class="warn">行動電源</b>（不能託運）</span></label>
+</div>
+
+<div class="card" data-sec="wear">
+  <h2>👟 穿在身上 <span class="cnt"></span></h2>
+  <label><input type="checkbox" data-id="spare-shoes"><span>備用跑鞋<span class="note">行李沒到也能跑</span></span></label>
+</div>
+
+<div class="card" data-sec="checked">
+  <h2>🧳 託運行李 <span class="cnt"></span></h2>
+  <label><input type="checkbox" data-id="gels-a"><span>UP 果膠 5 包（自己的行李）</span></label>
+  <label><input type="checkbox" data-id="gels-b"><span>UP 果膠 5 包（<b class="warn">家人的行李</b>）<span class="note">賽日吃 8 包＋備用 1–2 包</span></span></label>
+  <label><input type="checkbox" data-id="scissors"><span>剪刀（剪肌貼）</span></label>
+  <label><input type="checkbox" data-id="layers"><span>洋蔥式衣物：長袖、薄毛衣或帽 T、<b class="warn">防風外套</b>、長褲<span class="note">白天 17–20°C、晚上 7–13°C，湖邊風大</span></span></label>
+  <label><input type="checkbox" data-id="throwaway"><span>起跑區保暖用的舊衣或拋棄式雨衣<span class="note">07:20 起跑約 10°C，出發前丟掉</span></span></label>
+  <label><input type="checkbox" data-id="post-race"><span>賽後保暖衣、拖鞋</span></label>
+  <label><input type="checkbox" data-id="toiletries"><span>盥洗用品、防曬、護唇膏</span></label>
+  <label><input type="checkbox" data-id="esim"><span>網路：eSIM 或漫遊<span class="note">插頭跟台灣一樣，不用轉接頭</span></span></label>
+</div>
+
+<div class="card key" data-sec="final">
+  <h2>✅ 10/7 晚上最後確認 <span class="cnt"></span></h2>
+  <label><input type="checkbox" data-id="f-carry"><span>Pro 3、跑衣、藥都在隨身行李</span></label>
+  <label><input type="checkbox" data-id="f-gels"><span>果膠分成兩份，分別放兩個人的行李</span></label>
+  <label><input type="checkbox" data-id="f-hrm"><span>心跳帶已換電池</span></label>
+  <label><input type="checkbox" data-id="f-rx"><span>慢性處方箋已領</span></label>
+</div>
+
+<button class="btn" id="reset">清除所有勾選</button>
+
+<div class="foot">依 Personal Brain wiki 與跑團同事建議整理（裝備隨身、果膠分兩份託運）｜2026-10-05</div>
+
+<script>
+(function(){
+  var KEY='chicago-packing-v1', st={};
+  try{ st=JSON.parse(localStorage.getItem(KEY)||'{}')||{}; }catch(e){ st={}; }
+  var boxes=[].slice.call(document.querySelectorAll('input[type=checkbox]'));
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} }
+  function render(){
+    var done=0;
+    boxes.forEach(function(b){ b.parentNode.classList.toggle('done',b.checked); if(b.checked) done++; });
+    document.getElementById('ptxt').textContent='已完成 '+done+' / '+boxes.length;
+    document.getElementById('pbar').style.width=(boxes.length?done/boxes.length*100:0)+'%';
+    [].forEach.call(document.querySelectorAll('.card[data-sec]'),function(c){
+      var bs=c.querySelectorAll('input'), n=0; [].forEach.call(bs,function(b){ if(b.checked) n++; });
+      c.querySelector('.cnt').textContent=n+' / '+bs.length;
+    });
+  }
+  boxes.forEach(function(b){
+    var id=b.dataset.id;
+    b.checked = (id in st) ? !!st[id] : b.dataset.default==='1';
+    b.addEventListener('change',function(){ st[id]=b.checked; save(); render(); });
+  });
+  document.getElementById('reset').addEventListener('click',function(){
+    if(!confirm('確定要清除所有勾選嗎？')) return;
+    st={}; boxes.forEach(function(b){ b.checked=false; st[b.dataset.id]=false; }); save(); render();
+  });
+  render();
+})();
+</script>
+</body>
+</html>
