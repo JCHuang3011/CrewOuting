@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>芝加哥夥伴行李清單</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#1a1e26; --card2:#20252f;
+    --text:#e8eaf0; --muted:#9aa3b2;
+    --accent:#4fc3f7; --green:#66bb6a; --amber:#ffb74d; --red:#ef5350;
+    --border:#2c333f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,"PingFang TC","Noto Sans TC",sans-serif;line-height:1.6;padding:16px;max-width:640px;margin:0 auto}
+  h1{font-size:1.35rem;margin-bottom:4px}
+  .sub{color:var(--muted);font-size:.85rem;margin-bottom:12px}
+  .nav{display:flex;gap:8px;margin-bottom:14px}
+  .nav a{flex:1;text-align:center;padding:8px;border-radius:10px;background:var(--card2);color:var(--muted);text-decoration:none;font-size:.9rem;border:1px solid var(--border)}
+  .nav a.on{background:#0d2c3d;color:var(--accent);border-color:var(--accent)}
+  .progress{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 16px;margin-bottom:12px;position:sticky;top:8px;z-index:2}
+  .bar{height:8px;background:var(--card2);border-radius:4px;overflow:hidden;margin-top:6px}
+  .bar i{display:block;height:100%;background:var(--green);width:0;transition:width .2s}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 16px;margin-bottom:12px}
+  .card.key{border-color:var(--amber)}
+  .card h2{font-size:1.02rem;margin-bottom:6px;display:flex;justify-content:space-between;align-items:baseline}
+  .card h2 .cnt{font-size:.78rem;color:var(--muted);font-weight:400}
+  .card h3{font-size:.85rem;color:var(--muted);margin:8px 0 2px}
+  label{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--border);cursor:pointer;font-size:.93rem}
+  label:last-child{border-bottom:none}
+  input[type=checkbox]{width:22px;height:22px;flex:none;margin-top:1px;accent-color:var(--green)}
+  label.done span{color:var(--muted);text-decoration:line-through}
+  .note{display:block;color:var(--muted);font-size:.8rem;text-decoration:none}
+  b.warn{color:var(--amber)}
+  .btn{display:block;width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--card2);color:var(--muted);font-size:.9rem;margin-top:4px}
+  .foot{color:var(--muted);font-size:.75rem;text-align:center;margin:18px 0 8px}
+</style>
+</head>
+<body>
+
+<h1>🎒 芝加哥行李清單</h1>
+<div class="sub">10/8（四）17:00 桃園 T2 團體櫃台集合 → BR56 20:00｜點一下打勾，勾選會存在這支手機上</div>
+
+<div class="progress"><span id="ptxt">已完成 0 / 0</span><div class="bar"><i id="pbar"></i></div></div>
+
+<div class="card key" data-sec="doc">
+  <h2>🛂 證件與行程 <span class="cnt"></span></h2>
+  <label><input type="checkbox" data-id="passport"><span>護照<span class="note">效期要超過回國日 6 個月</span></span></label>
+  <label><input type="checkbox" data-id="esta"><span>ESTA 已核准<span class="note">核准頁 PDF 存一份在手機</span></span></label>
+  <label><input type="checkbox" data-id="itin"><span>機票、行程表、飯店資料（Aloft Chicago Mag Mile）</span></label>
+  <label><input type="checkbox" data-id="race-confirm"><span>馬拉松報到確認信／QR Code＋護照影本<span class="note">EXPO 領號碼布用｜起跑區、波次、入口看自己的確認信</span></span></label>
+  <label><input type="checkbox" data-id="bulls"><span>🏀 公牛季前賽電子票（10/9 19:00，購票 App 已登入）</span></label>
+  <label><input type="checkbox" data-id="money"><span>信用卡、少量美金、旅平險資料</span></label>
+</div>
+
+<div class="card key" data-sec="carry">
+  <h2>🎒 隨身行李（丟了就麻煩的） <span class="cnt"></span></h2>
+  <h3>跑步裝備</h3>
+  <label><input type="checkbox" data-id="raceshoes"><span><b class="warn">比賽跑鞋</b>（不託運）</span></label>
+  <label><input type="checkbox" data-id="racekit"><span>比賽跑衣、跑褲、跑襪（多一雙襪子）</span></label>
+  <label><input type="checkbox" data-id="tape"><span>肌貼、護具（有用的人）<span class="note">剪刀放託運</span></span></label>
+  <label><input type="checkbox" data-id="hrm"><span>心跳帶（有用的人，<b class="warn">出發前檢查電池</b>）</span></label>
+  <label><input type="checkbox" data-id="watch"><span>手錶＋充電線</span></label>
+  <label><input type="checkbox" data-id="caffeine"><span>賽日咖啡因（有吃的人）<span class="note">只帶練習時吃過的</span></span></label>
+  <h3>藥品（一定隨身）</h3>
+  <label><input type="checkbox" data-id="meds"><span><b class="warn">自己的常用藥</b>（原包裝，帶足天數＋幾天備用）</span></label>
+  <label><input type="checkbox" data-id="painkiller"><span>止痛藥<span class="note">帶自己吃過、確定不過敏的</span></span></label>
+  <label><input type="checkbox" data-id="allergy-shot"><span>手機存一份自己的過敏與用藥資料<span class="note">在國外看醫生時用得到</span></span></label>
+  <h3>機上</h3>
+  <label><input type="checkbox" data-id="bottle"><span>空水瓶（過安檢後裝水）</span></label>
+  <label><input type="checkbox" data-id="sleep-kit"><span>眼罩、耳塞</span></label>
+  <label><input type="checkbox" data-id="jacket"><span>機上外套</span></label>
+  <label><input type="checkbox" data-id="powerbank"><span>手機、充電器、<b class="warn">行動電源</b>（不能託運）</span></label>
+</div>
+
+<div class="card" data-sec="wear">
+  <h2>👟 穿在身上 <span class="cnt"></span></h2>
+  <label><input type="checkbox" data-id="spare-shoes"><span>備用跑鞋<span class="note">行李沒到也能跑</span></span></label>
+</div>
+
+<div class="card" data-sec="checked">
+  <h2>🧳 託運行李 <span class="cnt"></span></h2>
+  <label><input type="checkbox" data-id="gels"><span>能量膠<b class="warn">分成兩份</b>，放兩個不同的行李箱<span class="note">一箱丟了還有另一份；全馬約每 30 分 1 包＋備用 1–2 包</span></span></label>
+  <label><input type="checkbox" data-id="scissors"><span>剪刀（有帶肌貼的人）</span></label>
+  <label><input type="checkbox" data-id="layers"><span>洋蔥式衣物：長袖、薄毛衣或帽 T、<b class="warn">防風外套</b>、長褲<span class="note">白天 17–20°C、晚上 7–13°C，湖邊風大</span></span></label>
+  <label><input type="checkbox" data-id="throwaway"><span>起跑區保暖用的舊衣或拋棄式雨衣<span class="note">要在公園等 1.5–2 小時，早上約 10°C；起跑前丟掉</span></span></label>
+  <label><input type="checkbox" data-id="post-race"><span>賽後保暖衣、拖鞋</span></label>
+  <label><input type="checkbox" data-id="toiletries"><span>盥洗用品、防曬、護唇膏</span></label>
+  <label><input type="checkbox" data-id="esim"><span>網路：eSIM 或漫遊<span class="note">插頭跟台灣一樣，不用轉接頭</span></span></label>
+</div>
+
+<div class="card key" data-sec="final">
+  <h2>✅ 10/7 晚上最後確認 <span class="cnt"></span></h2>
+  <label><input type="checkbox" data-id="f-carry"><span>跑鞋、跑衣、藥都在隨身行李</span></label>
+  <label><input type="checkbox" data-id="f-gels"><span>能量膠分成兩份，放在不同行李箱</span></label>
+  <label><input type="checkbox" data-id="f-charge"><span>手錶、手機、行動電源都充飽</span></label>
+</div>
+
+<button class="btn" id="reset">清除所有勾選</button>
+
+<div class="foot">依跑團經驗整理：跑步裝備隨身帶、能量膠分兩份託運｜2026-10-07</div>
+
+<script>
+(function(){
+  var KEY='chicago-packing-crew-v1', st={};
+  try{ st=JSON.parse(localStorage.getItem(KEY)||'{}')||{}; }catch(e){ st={}; }
+  var boxes=[].slice.call(document.querySelectorAll('input[type=checkbox]'));
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} }
+  function render(){
+    var done=0;
+    boxes.forEach(function(b){ b.parentNode.classList.toggle('done',b.checked); if(b.checked) done++; });
+    document.getElementById('ptxt').textContent='已完成 '+done+' / '+boxes.length;
+    document.getElementById('pbar').style.width=(boxes.length?done/boxes.length*100:0)+'%';
+    [].forEach.call(document.querySelectorAll('.card[data-sec]'),function(c){
+      var bs=c.querySelectorAll('input'), n=0; [].forEach.call(bs,function(b){ if(b.checked) n++; });
+      c.querySelector('.cnt').textContent=n+' / '+bs.length;
+    });
+  }
+  boxes.forEach(function(b){
+    var id=b.dataset.id;
+    b.checked = (id in st) ? !!st[id] : b.dataset.default==='1';
+    b.addEventListener('change',function(){ st[id]=b.checked; save(); render(); });
+  });
+  document.getElementById('reset').addEventListener('click',function(){
+    if(!confirm('確定要清除所有勾選嗎？')) return;
+    st={}; boxes.forEach(function(b){ b.checked=false; st[b.dataset.id]=false; }); save(); render();
+  });
+  render();
+})();
+</script>
+</body>
+</html>
